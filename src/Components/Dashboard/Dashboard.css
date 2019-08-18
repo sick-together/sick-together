@@ -1,0 +1,19 @@
+.Dash {
+  width: 75%;
+  height: 100%;
+  margin: 0 auto;
+  animation: fadein 2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,27 @@
+.header {
+  background-color: #4d92e0;
+  /* background-image: linear-gradient(to right, #88e0ec, #4d92e0, #0b0eb9); */
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.25),
+    0 5px 5px 0 rgba(0, 0, 0, 0.26); */
+}
+
+.menu-icon {
+  color: #fff;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 10px 0 10px;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.nav-header {
+  color: #fff;
+  font-size: 25px;
+}

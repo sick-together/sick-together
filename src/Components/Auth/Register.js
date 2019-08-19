@@ -26,7 +26,6 @@ export class Register extends Component {
     let profilePic = `https://robohash.org/${this.state.username}`;
     this.props.signup(username, password, profilePic, city, state);
   };
-
   handleKeyDown = e => {
     if (e.keyCode === 13) {
       this.signupUser();

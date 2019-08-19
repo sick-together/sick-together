@@ -36,7 +36,7 @@ export class Register extends Component {
                     <div className='icon'>
                         <i className="fas fa-user-plus"></i>
                     </div>
-                    <h1 class="auth-title">Sick Together</h1>
+                    <h1 className="auth-title">Sick Together</h1>
                     <div className='auth-input-div'>
                         <p>Username</p>
                         <input type='text' name='username' onChange={this.handleChange} />

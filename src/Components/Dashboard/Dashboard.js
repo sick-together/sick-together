@@ -1,26 +1,36 @@
 import React, { Component } from 'react'
 import './Dashboard.css'
 import { logout } from '../../Redux/userReducer.js';
+import { getGroups } from '../../Redux/groupReducer.js'
 import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom'
 import Groups from '../Groups/Groups'
 
 
 export class Dashboard extends Component {
+    componentDidMount() {
+        this.props.getGroups()
+    }
     render() {
-        let { user } = this.props;
+        let { user } = this.props.user;
         if (!user.loggedIn) return <Redirect to="/" />;
         return (
-            <Groups />
+            <div className='Dash'>
+                <Groups />
+                <button onClick={this.props.logout}><Link to='/'>Logout</Link></button>
+            </div>
         )
     }
 }
 
 function mapStateToProps(state) {
-    return state.user;
+    return {
+        user: state.user,
+        groups: state.groups
+    }
 }
 export default connect(
     mapStateToProps,
-    { logout }
+    { logout, getGroups }
 )(Dashboard);
 

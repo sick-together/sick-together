@@ -23,9 +23,6 @@ export class LeftNav extends Component {
 
                 <div className={navClasses}>
 
-                    {/* <div>
-                        <i className="fas fa-bars" />
-                    </div> */}
                     <div className='nav-profile-details'>
                         <img className='nav-profile-details-img' src={profilePic} alt='Profile Pic' />
                         <div><p>{username}</p></div>

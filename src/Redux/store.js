@@ -8,7 +8,6 @@ import groupReducer from './groupReducer'
 const rootReducer = combineReducers({
     user: userReducer,
     groups: groupReducer
-
 })
 
 export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(promiseMiddleware)))

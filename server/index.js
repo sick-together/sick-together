@@ -24,7 +24,7 @@ app.use(session({
 }))
 
 //allow joining a chat
-socket.on('join room', async data => {
+io.on('join room', async data => {
     let { room } = data; 
     const db = app.get('db'); 
     console.log("You just joined ", room); 
@@ -38,7 +38,7 @@ socket.on('join room', async data => {
 }); 
 
 //send messages
-socket.on('send message', async data => {
+io.on('send message', async data => {
     const { room, message, sender } = data; 
     console.log(room, message, sender); 
     const db = app.get('db'); 
@@ -50,7 +50,7 @@ socket.on('send message', async data => {
 }); 
 
 //disconnected
-socket.on('disconnect', () => {
+io.on('disconnect', () => {
     console.log('Disconnected from room'); 
 }); 
 

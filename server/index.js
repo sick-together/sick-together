@@ -12,7 +12,7 @@ const socket = require('socket.io');
 const app = express()
 
 //used in the socket
-const io= socket(app.listen(SERVER_PORT, () => console.log(`Listening on port ${SERVER_PORT}`)))
+const io = socket(app.listen(SERVER_PORT, () => console.log(`Listening on port ${SERVER_PORT}`)))
 
 
 app.use(express.json())
@@ -25,35 +25,35 @@ app.use(session({
 }))
 
 //allow joining a chat
-socket.on('join room', async data => {
-    let { room } = data; 
-    const db = app.get('db'); 
-    console.log("You just joined ", room); 
-    const [existingRoom] = await db.look_for_room(room); 
-    console.log('exist', existingRoom); 
-    if(!existingRoom) await db.create_room(room); 
-    let messages = await db.get_messages(room); 
-    console.log('messages', messages); 
-    socket.join(room); 
-    io.in(room).emit('room entered', messages); 
-}); 
+io.on('join room', async data => {
+    let { room } = data;
+    const db = app.get('db');
+    console.log("You just joined ", room);
+    const [existingRoom] = await db.look_for_room(room);
+    console.log('exist', existingRoom);
+    if (!existingRoom) await db.create_room(room);
+    let messages = await db.get_messages(room);
+    console.log('messages', messages);
+    socket.join(room);
+    io.in(room).emit('room entered', messages);
+});
 
 //send messages
-socket.on('send message', async data => {
-    const { room, message, sender } = data; 
-    console.log(room, message, sender); 
-    const db = app.get('db'); 
+io.on('send message', async data => {
+    const { room, message, sender } = data;
+    console.log(room, message, sender);
+    const db = app.get('db');
     await db.send_message(room, message, sender)
-    let messages = await db.get_messages(room); 
-    if(messages.length <= 1) io.to(room).emit('room entered', messages); 
-    console.log('messages', messages); 
-    io.to(data.room).emit('message sent', messages); 
-}); 
+    let messages = await db.get_messages(room);
+    if (messages.length <= 1) io.to(room).emit('room entered', messages);
+    console.log('messages', messages);
+    io.to(data.room).emit('message sent', messages);
+});
 
 //disconnected
-socket.on('disconnect', () => {
-    console.log('Disconnected from room'); 
-}); 
+io.on('disconnect', () => {
+    console.log('Disconnected from room');
+});
 
 
 
@@ -74,8 +74,10 @@ app.delete('/api/logout', ac.logout)
 app.post('/api/creategroup', authCheck, gc.createGroup)
 app.get('/api/getgroups', gc.getGroups)
 app.get('/api/selected/:groupId', gc.getSelected)
+app.get('/api/getgroupmessages/:groupId', gc.getGroupMessages)
+app.post('/api/addmessage', gc.addMessage)
 
 
-app.listen(SERVER_PORT, () => console.log(`Listening on port ${SERVER_PORT}`))
+// app.listen(SERVER_PORT, () => console.log(`Listening on port ${SERVER_PORT}`))
 
 

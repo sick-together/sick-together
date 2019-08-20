@@ -1,17 +1,16 @@
 import axios from 'axios';
-import { GET_GROUPS, GET_SELECTED_GROUP } from './actionTypes';
+import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, ADD_MESSAGE } from './actionTypes';
 
 const initialState = {
     groups: [],
-    selectedGroup: {}
+    selectedGroup: {},
+    groupMessages: {}
 }
-
-
 
 export const getGroups = () => {
     let data = axios.get('/api/getgroups')
         .then(res => res.data)
-        console.log('Groups:', data)
+    console.log('Groups:', data)
     return {
         type: GET_GROUPS,
         payload: data
@@ -28,6 +27,26 @@ export const getSelectedGroup = (groupId) => {
     }
 }
 
+export const getGroupMessages = (groupId) => {
+    let data = axios.get(`/api/getgroupmessages/${groupId}`)
+        .then(res => res.data)
+    console.log('Group Messages:', data)
+    return {
+        type: GET_GROUP_MESSAGES,
+        payload: data
+    }
+}
+
+export const addMessage = (newMessage, groupId) => {
+    let data = axios.post('/api/addmessage', { newMessage, groupId })
+        .then(res => res.data)
+    return {
+        type: ADD_MESSAGE,
+        payload: data
+    }
+
+}
+
 
 export default function (state = initialState, action) {
     let { type, payload } = action
@@ -41,6 +60,16 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 selectedGroup: payload
+            }
+        case GET_GROUP_MESSAGES + '_FULFILLED':
+            return {
+                ...state,
+                groupMessages: payload
+            }
+        case ADD_MESSAGE + '_FULFILLED':
+            return {
+                ...state,
+                groupMessages: payload
             }
 
         default:

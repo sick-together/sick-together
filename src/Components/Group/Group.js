@@ -1,6 +1,7 @@
 import React from 'react'
 import { getSelectedGroup } from '../../Redux/groupReducer.js'
 import { connect } from 'react-redux';
+import io from 'socket.io-client';
 
 function Group(props) {
     let { selectedGroup } = props.groups
@@ -27,3 +28,4 @@ export default connect(
     mapStateToProps,
     { getSelectedGroup }
 )(Group);
+

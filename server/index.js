@@ -71,6 +71,7 @@ app.post('/api/signup', ac.signup)
 app.get('/api/user', authCheck, ac.getUser)
 app.delete('/api/logout', ac.logout)
 
+app.post('/api/creategroup', authCheck, gc.createGroup)
 app.get('/api/getgroups', gc.getGroups)
 app.get('/api/selected/:groupId', gc.getSelected)
 

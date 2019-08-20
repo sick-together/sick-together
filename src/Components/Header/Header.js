@@ -1,26 +1,8 @@
-// import React from 'react'
-// import './Header.css'
-
-// function Header(props) {
-//     return (
-//         <header className='header'>
-//             <div className='menu-icon'>
-//                 <i className="fas fa-bars" onClick={props.leftNavClickHandler} />
-//             </div>
-//             <div className='nav-header'>
-//                 <h3>Sick Together</h3>
-//             </div>
-//             <div className='menu-icon'>
-//                 <i className="fas fa-comment-medical" />
-//             </div>
-//         </header>
-//     )
-// }
-
-// export default Header
-
 import React from 'react';
 import clsx from 'clsx';
+import { connect } from 'react-redux'
+import { logout, getUser } from '../../Redux/userReducer.js';
+import { Link } from 'react-router-dom'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -41,7 +23,8 @@ import MailIcon from '@material-ui/icons/Mail';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
-const drawerWidth = 240;
+
+const drawerWidth = 220;
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -99,10 +82,11 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function PersistentDrawerLeft() {
+function Header(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const { user } = props
 
     function handleDrawerOpen() {
         setOpen(true);
@@ -132,8 +116,8 @@ export default function PersistentDrawerLeft() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
-                        Sick Together
-          </Typography>
+                        <Link to='/dashboard'>   Sick Together</Link>
+                    </Typography>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -152,9 +136,9 @@ export default function PersistentDrawerLeft() {
                 </div>
                 <Divider />
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <ExitToAppIcon /> : <AccountCircleIcon />}</ListItemIcon>
+                    {['My Account', 'Inbox', 'Send email', 'Logout'].map((text, index) => (
+                        <ListItem button key={text} onClick={text === 'Logout' ? props.logout : null}>
+                            <ListItemIcon>{text === 'Logout' ? <ExitToAppIcon /> : <AccountCircleIcon />}</ListItemIcon>
                             <ListItemText primary={text} />
                         </ListItem>
                     ))}
@@ -179,3 +163,8 @@ export default function PersistentDrawerLeft() {
         </div>
     );
 }
+function mapStateToProps(state) {
+    return state.user;
+}
+
+export default connect(mapStateToProps, { logout, getUser })(Header)

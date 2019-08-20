@@ -1,20 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { getSelectedGroup } from '../../Redux/groupReducer.js'
+import { connect } from 'react-redux';
 import io from 'socket.io-client';
 
 class Group extends Component {
-    consturctor () {
-        super(); 
-        this.state = {
+    state = {
             input: '', 
             messages: [], 
             room: '', 
             joined: false
-        }
-        this.joinRoom = this.joinRoom.bind(this); 
-        this.joinSuccess = this.joinSuccess.bind(this); 
-        this.sendMessage = this.sendMessage.bind(this); 
-        this.updateMessages = this.updateMessages.bind(this); 
-    }
+        }; 
+
+
     componentDidMount() {
         this.socket = io(); 
         this.socket.on('room joined', data => {
@@ -63,9 +60,19 @@ class Group extends Component {
     }
 
     render() {
+        let { selectedGroup } = this.props.groups
+        console.log('selected group:', selectedGroup);
+        if (selectedGroup && selectedGroup[0]) {
+            let { group_name, group_picture, description } = selectedGroup[0]
         console.log(this.state.messages)
         return (
             <div className="App">
+                <div>
+                {group_name}
+                <img src={group_picture} alt='Group' />
+                {description}
+            </div>
+
                 {this.state.joined ?
                 <h1> My Room: {this.state.room}</h1>
             : null}
@@ -98,4 +105,19 @@ class Group extends Component {
             </div>
         ); 
     }
+    }
 }
+
+
+function mapStateToProps(state) {
+    return {
+        user: state.user,
+        groups: state.groups
+}; 
+}
+    
+
+export default connect(
+    mapStateToProps,
+    { getSelectedGroup }
+)(Group);

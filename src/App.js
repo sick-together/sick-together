@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import Header from './Components/Header/Header'
 import LeftNav from './Components/LeftNav/LeftNav'
+import { connect } from 'react-redux'
+import { getUser } from './Redux/userReducer.js';
 import routes from './routes'
 
 class App extends Component {
@@ -12,6 +14,10 @@ class App extends Component {
     }
 
   }
+  componentDidMount = () => {
+    this.props.getUser()
+    console.log('Got User!')
+  }
 
   leftNavClickHandler = () => {
     let { leftNavOpen } = this.state
@@ -19,14 +25,18 @@ class App extends Component {
   }
 
   render() {
+    let { user } = this.props
     return (
       <div className="App" >
-        <Header leftNavClickHandler={this.leftNavClickHandler} />
-        <LeftNav show={this.state.leftNavOpen} drawerClickHandler={this.leftNavClickHandler} />
+        {user && user.loggedIn ? (<header><Header leftNavClickHandler={this.leftNavClickHandler} />
+          <LeftNav show={this.state.leftNavOpen} drawerClickHandler={this.leftNavClickHandler} /></header>) : null}
+
         {routes}
       </div>
     );
   }
 }
-
-export default App;
+function mapStateToProps(state) {
+  return state.user;
+}
+export default connect(mapStateToProps, { getUser })(App)

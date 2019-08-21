@@ -78,6 +78,7 @@ app.get('/api/selected/:groupId', gc.getSelected)
 app.get('/api/getgroupmessages/:groupId', gc.getGroupMessages)
 app.get('/api/getrooms/:groupId', gc.getRooms)
 app.post('/api/addmessage', gc.addMessage)
+app.delete('/api/deletegroup/:group_id', authCheck, gc.deleteGroup)
 
 
 

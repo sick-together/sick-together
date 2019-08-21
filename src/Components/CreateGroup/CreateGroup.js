@@ -56,10 +56,11 @@ export class CreateGroup extends Component {
           label="Description"
           onChange={this.handleChange}
         />
-        <Link to='/dashboard'>
+        <Link to="/">
+          {" "}
           <Button onClick={this.handleSubmit} variant="contained">
             Submit
-        </Button>
+          </Button>{" "}
         </Link>
       </form>
     );

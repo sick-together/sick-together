@@ -31,6 +31,6 @@ function mapStateToProps(state) {
 }
 export default connect(
     mapStateToProps,
-    { logout, getGroups }
+     { logout, getGroups }
 )(Dashboard);
 

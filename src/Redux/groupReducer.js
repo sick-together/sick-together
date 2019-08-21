@@ -58,9 +58,9 @@ export const addMessage = (newMessage, groupId, roomId) => {
 
 }
 
-export function createGroup(group_name, user_id, group_picture, description) {
+export function createGroup(group_name, group_picture, description) {
     let data = axios
-        .post("/api/groups", { group_name, user_id, group_picture, description })
+        .post("/api/groups", { group_name, group_picture, description })
         .then(res => res.data);
     return {
         type: CREATE_GROUP,

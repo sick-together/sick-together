@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, ADD_MESSAGE, CREATE_GROUP } from './actionTypes';
+import { CREATE_GROUP, GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, ADD_MESSAGE, CREATE_GROUP } from './actionTypes';
 
 const initialState = {
     groups: [],
@@ -47,9 +47,9 @@ export const addMessage = (newMessage, groupId) => {
 
 }
 
-export function createGroup(group_name, user_id, group_picture, description) {
+export function createGroup(group_name, group_picture, description) {
     let data = axios
-        .post("/api/groups", { group_name, user_id, group_picture, description })
+        .post("/api/groups", { group_name, group_picture, description })
         .then(res => res.data);
     return {
         type: CREATE_GROUP,

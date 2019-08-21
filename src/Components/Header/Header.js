@@ -22,7 +22,8 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 
 const drawerWidth = 220;
 
@@ -96,6 +97,7 @@ function Header(props) {
         setOpen(false);
     }
 
+
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -145,11 +147,18 @@ function Header(props) {
                 </List>
                 <Divider />
                 <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem button key={text}>
-                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                    {['All mail', 'Trash', 'Create New Group'].map((text, index) => (
+                        <div>
+                        {text === 'Create New Group' ? (<Link to='/creategroup'><ListItem button key={text}> 
+                            <ListItemIcon><Fab size="small" color="secondary" aria-label="add" className={classes.margin}>
+          <AddIcon /></Fab></ListItemIcon>
                             <ListItemText primary={text} />
-                        </ListItem>
+                        </ListItem></Link>) : (<ListItem button key={text}> 
+                            <ListItemIcon><MailIcon /></ListItemIcon>
+                            <ListItemText primary={text} />
+                        </ListItem>)}
+                        
+                        </div>
                     ))}
                 </List>
             </Drawer>

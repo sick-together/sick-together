@@ -72,13 +72,14 @@ app.get('/api/user', authCheck, ac.getUser)
 app.delete('/api/logout', ac.logout)
 
 app.post('/api/creategroup', authCheck, gc.createGroup)
+app.post('/api/creategeneral/:groupId', gc.createGeneral)
 app.get('/api/getgroups', gc.getGroups)
 app.get('/api/selected/:groupId', gc.getSelected)
 app.get('/api/getgroupmessages/:groupId', gc.getGroupMessages)
+app.get('/api/getrooms/:groupId', gc.getRooms)
 app.post('/api/addmessage', gc.addMessage)
 app.delete('/api/deletegroup/:group_id', authCheck, gc.deleteGroup)
 
 
-// app.listen(SERVER_PORT, () => console.log(`Listening on port ${SERVER_PORT}`))
 
 

@@ -13,14 +13,15 @@ import GroupIcon from "@material-ui/icons/Group";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 
 const useStyles = makeStyles({
-  card: {
-    maxWidth: 725,
-    marginTop: 10
-  },
-  groupButtons: {
-    display: "flex",
-    justifyContent: "space-between"
-  }
+    card: {
+        maxWidth: 725,
+        minWidth: 725,
+        marginTop: 10
+    },
+    groupButtons: {
+        display: 'flex',
+        justifyContent: 'space-between'
+    }
 });
 
 function Groups(props) {

@@ -11,6 +11,13 @@ module.exports = {
     ]);
     res.send(groups);
   },
+  async createGeneral(req, res) {
+    let { groupId } = req.params
+    const db = req.app.get('db')
+    let rooms = await db.create_general(+groupId)
+      .catch(err => console.log('Error with adding initial room', err))
+    res.send(rooms)
+  },
   async deleteGroup(req, res) {
     let { group_id } = req.params;
     const db = req.app.get("db");

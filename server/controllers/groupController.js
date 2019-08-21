@@ -21,5 +21,21 @@ module.exports = {
         const db = req.app.get('db')
         let group = await db.get_selected_group(groupId)
         res.send(group)
+    },
+    async getGroupMessages(req, res) {
+        let { groupId } = req.params
+        const db = req.app.get('db')
+        let messages = await db.get_messages(+groupId)
+        res.send(messages)
+    },
+    async addMessage(req, res) {
+        let { newMessage, groupId } = req.body
+        const db = req.app.get('db')
+        let messages = await db.add_message([
+            newMessage,
+            groupId,
+            +req.session.user.id
+        ]).catch(err => console.log('Error with adding a message', err))
+        res.send(messages)
     }
 }

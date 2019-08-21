@@ -12,7 +12,7 @@ module.exports = {
         if (result) {
             req.session.user = {
                 username: existingUser.username,
-                id: existingUser.id,
+                id: existingUser.user_id,
                 profilePic: existingUser.profile_pic,
                 city: existingUser.city,
                 state: existingUser.state,
@@ -31,7 +31,7 @@ module.exports = {
         let [user] = await db.register_user([username, hash, profilePic, city, state])
         req.session.user = {
             username: user.username,
-            id: user.id,
+            id: user.user_id,
             profilePic: user.profile_pic,
             city: user.city,
             state: user.state,

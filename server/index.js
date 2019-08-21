@@ -75,6 +75,6 @@ app.get('/api/getgroups', gc.getGroups)
 app.get('/api/selected/:groupId', gc.getSelected)
 
 
-app.listen(SERVER_PORT, () => console.log(`Listening on port ${SERVER_PORT}`))
+
 
 

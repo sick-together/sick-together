@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
-import { createGroup } from "../../Redux/groupReducer";
+import { Link } from 'react-router-dom'
+import { createGroup, getGroups } from "../../Redux/groupReducer";
 
 export class CreateGroup extends Component {
   constructor() {
@@ -14,30 +15,32 @@ export class CreateGroup extends Component {
     };
   }
 
-
+  componentDidMount() {
+    this.props.getGroups()
+  }
 
   handleChange = e => {
     let { name, value } = e.target;
     this.setState({
       [name]: value
     });
+    console.log(name, value)
   };
 
   handleSubmit = () => {
-    console.log(this.props.user);
-    let { id } = this.props.user;
     let { group_name, group_picture, description } = this.state;
+    this.props.createGroup(group_name, group_picture, description)
     this.setState({
       group_name: "",
       group_picture: "",
       description: ""
     });
-    this.props.createGroup(group_name, id, group_picture, description);
+
   };
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} >
         <TextField
           name="group_name"
           label="Group Name"
@@ -53,9 +56,11 @@ export class CreateGroup extends Component {
           label="Description"
           onChange={this.handleChange}
         />
-        <Button onClick={this.handleSubmit} variant="contained">
-          Submit
+        <Link to='/dashboard'>
+          <Button onClick={this.handleSubmit} variant="contained">
+            Submit
         </Button>
+        </Link>
       </form>
     );
   }
@@ -67,5 +72,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-  { createGroup }
+  { createGroup, getGroups }
 )(CreateGroup);

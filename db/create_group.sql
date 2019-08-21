@@ -1,10 +1,9 @@
 insert into groups (group_name, user_id, group_picture, description)
 values ($1, $2, $3, $4);
 
+-- select * from groups g
+-- join users u on u.user_id = g.user_id
+-- where u.user_id = $2;
 
-insert into rooms(room_name, group_id)
-values('general', $5 );
-
-select * from groups g
-join users u on u.user_id = g.user_id
-where u.user_id = $2;
+SELECT * FROM groups
+ORDER BY groups.group_id DESC;

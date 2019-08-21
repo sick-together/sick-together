@@ -1,11 +1,12 @@
 import axios from 'axios';
-import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, GET_ROOMS, ADD_MESSAGE, CREATE_GROUP } from './actionTypes';
+import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, GET_ROOMS, ADD_MESSAGE, CREATE_GROUP, CREATE_GENERAL } from './actionTypes';
 
 const initialState = {
     groups: [],
     selectedGroup: {},
     groupMessages: {},
-    rooms: []
+    rooms: [],
+    lastGroupId: null
 }
 
 export const getGroups = () => {
@@ -60,12 +61,22 @@ export const addMessage = (newMessage, groupId, roomId) => {
 
 export function createGroup(group_name, group_picture, description) {
     let data = axios
-        .post("/api/groups", { group_name, group_picture, description })
+        .post("/api/creategroup", { group_name, group_picture, description })
         .then(res => res.data);
     return {
         type: CREATE_GROUP,
         payload: data
+
     };
+}
+
+export function createGeneral(groupId) {
+    let data = axios.post(`/api/creategeneral/${groupId}`)
+        .then(res => res.data)
+    return {
+        type: CREATE_GENERAL,
+        payload: data
+    }
 }
 
 
@@ -98,9 +109,14 @@ export default function (state = initialState, action) {
                 groupMessages: payload
             }
         case CREATE_GROUP + "_FULFILLED":
-            return { ...state, groups: payload };
+            console.log(+payload[0].group_id);
+            return { ...state, groups: payload, lastGroupId: +payload[0].group_id };
         case CREATE_GROUP + "_REJECTED":
             return { ...state, error: payload };
+        case CREATE_GENERAL + '_FULFILLED':
+            return {
+                ...state
+            }
         default:
             return state
     }

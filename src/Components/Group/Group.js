@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getSelectedGroup, getGroupMessages, getRooms, addMessage } from '../../Redux/groupReducer.js'
+import { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral } from '../../Redux/groupReducer.js'
 import { connect } from 'react-redux';
 import './Group.css'
 import Paper from '@material-ui/core/Paper';
@@ -101,6 +101,9 @@ function Group(props) {
             let { group_id } = selectedGroup[0]
             props.getGroupMessages(+group_id)
             props.getRooms(+group_id)
+            if (!rooms.length) {
+                props.createGeneral(group_id)
+            }
         }
     }, [selectedGroup[0]])
 
@@ -203,6 +206,6 @@ function mapStateToProps(state) {
 }
 export default connect(
     mapStateToProps,
-    { getSelectedGroup, getGroupMessages, getRooms, addMessage }
+    { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral }
 )(Group);
 

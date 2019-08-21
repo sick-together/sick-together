@@ -48,5 +48,11 @@ module.exports = {
       .add_message([newMessage, groupId, +req.session.user.id])
       .catch(err => console.log("Error with adding a message", err));
     res.send(messages);
-  }
+  },
+  async getRooms(req, res) {
+    let { groupId } = req.params
+    const db = req.app.get('db')
+    let rooms = await db.get_rooms(+groupId)
+    res.send(rooms)
+  },
 };

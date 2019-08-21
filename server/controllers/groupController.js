@@ -1,11 +1,11 @@
 module.exports = {
   async createGroup(req, res) {
-    let { user_id } = req.session.user;
+    let { id } = req.session.user;
     let { group_name, group_picture, description } = req.body;
     const db = req.app.get("db");
     let groups = await db.create_group([
       group_name,
-      user_id,
+      id,
       group_picture,
       description
     ]);
@@ -28,12 +28,19 @@ module.exports = {
         let messages = await db.get_messages(+groupId)
         res.send(messages)
     },
+    async getRooms(req, res){
+      let {groupId} = req.params
+      const db = req.app.get('db')
+      let rooms = await db.get_rooms(+groupId)
+      res.send(rooms)
+    },
     async addMessage(req, res) {
-        let { newMessage, groupId } = req.body
+        let { newMessage, groupId, roomId } = req.body
         const db = req.app.get('db')
         let messages = await db.add_message([
             newMessage,
             groupId,
+            roomId,
             +req.session.user.id
         ]).catch(err => console.log('Error with adding a message', err))
         res.send(messages)

@@ -75,6 +75,7 @@ app.post('/api/creategroup', authCheck, gc.createGroup)
 app.get('/api/getgroups', gc.getGroups)
 app.get('/api/selected/:groupId', gc.getSelected)
 app.get('/api/getgroupmessages/:groupId', gc.getGroupMessages)
+app.get('/api/getrooms/:groupId', gc.getRooms)
 app.post('/api/addmessage', gc.addMessage)
 
 

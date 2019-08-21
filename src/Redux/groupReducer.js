@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, ADD_MESSAGE, CREATE_GROUP } from './actionTypes';
+import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, GET_ROOMS, ADD_MESSAGE, CREATE_GROUP } from './actionTypes';
 
 const initialState = {
     groups: [],
     selectedGroup: {},
-    groupMessages: {}
+    groupMessages: {},
+    rooms: []
 }
 
 export const getGroups = () => {
@@ -37,8 +38,18 @@ export const getGroupMessages = (groupId) => {
     }
 }
 
-export const addMessage = (newMessage, groupId) => {
-    let data = axios.post('/api/addmessage', { newMessage, groupId })
+export const getRooms = (groupId) => {
+    let data = axios.get(`/api/getrooms/${groupId}`)
+        .then(res => res.data)
+    console.log('Rooms:', data)
+    return {
+        type: GET_ROOMS,
+        payload: data
+    }
+}
+
+export const addMessage = (newMessage, groupId, roomId) => {
+    let data = axios.post('/api/addmessage', { newMessage, groupId, roomId })
         .then(res => res.data)
     return {
         type: ADD_MESSAGE,
@@ -75,6 +86,11 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 groupMessages: payload
+            }
+        case GET_ROOMS + '_FULFILLED':
+            return {
+                ...state,
+                rooms: payload
             }
         case ADD_MESSAGE + '_FULFILLED':
             return {

@@ -1,19 +1,29 @@
 import axios from "axios";
-import { CREATE_GROUP } from "./actionTypes";
+import { CREATE_GROUP, GET_SELECTED_GROUP, GET_GROUPS } from "./actionTypes";
 
 const initialState = {
   groups: [],
   error: false
 };
 
-export function createGroup(group_name, user_id, group_picture, description) {
+export function createGroup(group_name, group_picture, description) {
   let data = axios
-    .post("/api/groups", { group_name, user_id, group_picture, description })
+    .post("/api/creategroup", { group_name, group_picture, description })
     .then(res => res.data);
   return {
     type: CREATE_GROUP,
     payload: data
   };
+}
+
+export const getGroups = () => {
+  let data = axios.get('/api/getgroups')
+      .then(res => res.data)
+  console.log('Groups:', data)
+  return {
+      type: GET_GROUPS,
+      payload: data
+  }
 }
 
 export const getSelectedGroup = groupId => {

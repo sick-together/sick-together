@@ -11,7 +11,7 @@ const { SERVER_PORT, SESSION_SECRET, CONNECTION_STRING } = process.env
 const socket = require('socket.io');
 const app = express()
 
-//used in the socket
+// //used in the socket
 const io= socket(app.listen(SERVER_PORT, () => console.log(`Listening on port ${SERVER_PORT}`)))
 
 
@@ -25,7 +25,7 @@ app.use(session({
 }))
 
 //allow joining a chat
-socket.on('join room', async data => {
+io.on('join room', async data => {
     let { room } = data; 
     const db = app.get('db'); 
     console.log("You just joined ", room); 
@@ -39,7 +39,7 @@ socket.on('join room', async data => {
 }); 
 
 //send messages
-socket.on('send message', async data => {
+io.on('send message', async data => {
     const { room, message, sender } = data; 
     console.log(room, message, sender); 
     const db = app.get('db'); 
@@ -51,7 +51,7 @@ socket.on('send message', async data => {
 }); 
 
 //disconnected
-socket.on('disconnect', () => {
+io.on('disconnect', () => {
     console.log('Disconnected from room'); 
 }); 
 
@@ -76,6 +76,6 @@ app.get('/api/getgroups', gc.getGroups)
 app.get('/api/selected/:groupId', gc.getSelected)
 
 
-app.listen(SERVER_PORT, () => console.log(`Listening on port ${SERVER_PORT}`))
+// app.listen(SERVER_PORT, () => console.log(`Listening on port ${SERVER_PORT}`))
 
 

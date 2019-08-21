@@ -3,6 +3,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import { createGroup } from "../../Redux/groupReducer";
+import { Link } from "react-router-dom";
 
 export class CreateGroup extends Component {
   constructor() {
@@ -14,8 +15,6 @@ export class CreateGroup extends Component {
     };
   }
 
-
-
   handleChange = e => {
     let { name, value } = e.target;
     this.setState({
@@ -24,7 +23,6 @@ export class CreateGroup extends Component {
   };
 
   handleSubmit = () => {
-    console.log(this.props.user);
     let { id } = this.props.user;
     let { group_name, group_picture, description } = this.state;
     this.setState({
@@ -53,9 +51,12 @@ export class CreateGroup extends Component {
           label="Description"
           onChange={this.handleChange}
         />
-        <Button onClick={this.handleSubmit} variant="contained">
-          Submit
-        </Button>
+        <Link to="/">
+          {" "}
+          <Button onClick={this.handleSubmit} variant="contained">
+            Submit
+          </Button>{" "}
+        </Link>
       </form>
     );
   }

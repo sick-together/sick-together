@@ -260,4 +260,3 @@ export default connect(
     mapStateToProps,
     { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom }
 )(Group);
-

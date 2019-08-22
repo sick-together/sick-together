@@ -148,8 +148,8 @@ function Header(props) {
                 <Divider />
                 <List>
                     {['All mail', 'Trash', 'Create New Group'].map((text, index) => (
-                        <div>
-                        {text === 'Create New Group' ? (<Link to='/creategroup'><ListItem button key={text}> 
+                        <div key={text}>
+                        {text === 'Create New Group' ? (<Link to='/creategroup'><ListItem button > 
                             <ListItemIcon><Fab size="small" color="secondary" aria-label="add" className={classes.margin}>
           <AddIcon /></Fab></ListItemIcon>
                             <ListItemText primary={text} />

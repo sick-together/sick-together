@@ -1,86 +1,127 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { signup } from "../../Redux/userReducer.js";
 import { connect } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
-import "./Auth.css";
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Avatar from '@material-ui/core/Avatar';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import './Login.css'
 
-export class Register extends Component {
-  constructor() {
-    super();
-    this.state = {
-      username: "",
-      password: "",
-      city: "",
-      state: ""
-    };
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: theme.spacing(8),
+    padding: theme.spacing(3)
+  },
+  loginButton: {
+    margin: 15
+  },
+  registerLink: {
+    display: 'flex',
+  },
+  avatarIcon: {
+    marginBottom: 10
+  },
+  staInput: {
+    marginBottom: 30
   }
+}));
 
-  handleChange = e => {
-    let { name, value } = e.target;
-    this.setState({ [name]: value });
-    console.log(name, value);
-  };
+function Register(props){
+  const [username, setUsername] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [city, setCity] = React.useState('')
+  const [state, setStateUS] = React.useState('')
 
-  signupUser = () => {
-    let { username, password, city, state } = this.state;
-    let profilePic = `https://robohash.org/${this.state.username}`;
-    this.props.signup(username, password, profilePic, city, state);
+  function signupUser(){
+    // let { username, password, city, state } = this.state;
+    let profilePic = `https://robohash.org/${username}`;
+    props.signup(username, password, profilePic, city, state);
   };
-  handleKeyDown = e => {
+  function handleKeyDown(e){
     if (e.keyCode === 13) {
       this.signupUser();
     }
   };
 
-  render() {
-    let { user } = this.props;
+    let { user } = props;
+    const classes = useStyles();
     if (user.loggedIn) return <Redirect to="/dashboard" />;
     return (
-      <div className="auth-master">
-        <div className="auth-container">
-          <div className="icon">
-            <i className="fas fa-user-plus" />
-          </div>
-          <h1 class="auth-title">Sick Together</h1>
-          <div className="auth-input-div">
-            <p>Username</p>
-            <input type="text" name="username" onChange={this.handleChange} />
-          </div>
-          <div className="auth-input-div">
-            <p>Password:</p>
-            <input
-              type="password"
-              name="password"
-              onChange={this.handleChange}
-            />
-          </div>
-          <div className="auth-input-div">
-            <p>City:</p>
-            <input type="text" name="city" onChange={this.handleChange} />
-          </div>
-          <div className="auth-input-div">
-            <p>State:</p>
-            <input
-              type="text"
-              name="state"
-              onChange={this.handleChange}
-              onKeyDown={this.handleKeyDown}
-            />
-          </div>
-          <div className="auth-buttons">
-            <button className="dark-button">
-              <Link to="/">Login</Link>
-            </button>
-            <button className="dark-button" onClick={this.signupUser}>
-              Register
-            </button>
-          </div>
-          <div />
-        </div>
-      </div>
+      <Container component='main' maxWidth='xs' className={classes.mainContainer}>
+          <CssBaseline />
+        <Paper className={classes.root}>
+          <Avatar className={classes.avatarIcon}>
+            <LockOutlinedIcon/>
+          </Avatar>
+          <Typography variant="h5" component="h3">Sign Up</Typography>
+
+          <TextField 
+          id='standard-name'
+          label='Username'
+          name='username'
+          required
+          fullWidth
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          className={classes.textField}
+          margin="normal"
+          />
+          <TextField 
+          id="password-input"
+          label="Password"
+          name='password'
+          required
+          fullWidth
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          className={classes.passField}
+          type="password"
+          margin="normal"
+          />
+          <TextField 
+          id='city-input'
+          label='City'
+          name='city'
+          required
+          fullWidth
+          value={city}
+          onChange={e => setCity(e.target.value)}
+          margin='normal'
+          />
+
+          <TextField 
+          id='state-input'
+          label='State'
+          name='state'
+          required
+          fullWidth
+          value={state}
+          onChange={e => setStateUS(e.target.value)}
+          className={classes.staInput}
+          margin='normal'
+          />
+          
+            <Button variant='contained' color='primary' fullWidth className={classes.loginButton} onClick={signupUser} onKeyDown={handleKeyDown}>Register</Button>
+              <Grid className={classes.registerLink}>
+                <Typography>Already have an account? </Typography>
+                <Link to='/' className="SignUp-Link">
+                  Login
+                </Link>
+              </Grid>
+        </Paper>
+        </Container>
     );
   }
-}
 
 function mapStateToProps(state) {
   return state.user;

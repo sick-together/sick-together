@@ -1,7 +1,7 @@
-delete from rooms
+delete from messages
 where group_id = $1;
 
-delete from messages
+delete from rooms
 where group_id = $1;
 
 delete from groups

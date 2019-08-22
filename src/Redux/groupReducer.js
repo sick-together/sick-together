@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, GET_ROOMS, ADD_MESSAGE, CREATE_GROUP, CREATE_GENERAL, DELETE_GROUP } from './actionTypes';
+import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, GET_ROOMS, ADD_MESSAGE, CREATE_GROUP, CREATE_GENERAL, DELETE_GROUP, ADD_ROOM } from './actionTypes';
 
 const initialState = {
     groups: [],
@@ -83,6 +83,15 @@ export function createGeneral(groupId) {
     }
 }
 
+export function addNewRoom(newRoom, group_id) {
+    let data = axios.post(`/api/createroom/${group_id}`, { newRoom })
+        .then(res => res.data)
+    return {
+        type: ADD_ROOM,
+        payload: data
+    }
+}
+
 export function deleteGroup(group_id) {
     let data = axios.delete(`/api/deletegroup/${group_id}`)
         .then(res => res.data)
@@ -133,6 +142,8 @@ export default function (state = initialState, action) {
             return {
                 ...state
             }
+        case ADD_ROOM + '_FULFILLED':
+            return { ...state, rooms: payload }
         case DELETE_GROUP + '_FULFILLED':
             return { ...state, groups: payload }
         default:

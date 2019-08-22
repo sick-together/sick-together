@@ -73,6 +73,7 @@ app.delete('/api/logout', ac.logout)
 
 app.post('/api/creategroup', authCheck, gc.createGroup)
 app.post('/api/creategeneral/:groupId', gc.createGeneral)
+app.post('/api/createroom/:groupId', gc.createRoom)
 app.get('/api/getgroups', gc.getGroups)
 app.get('/api/selected/:groupId', gc.getSelected)
 app.get('/api/getgroupmessages/:groupId', gc.getGroupMessages)

@@ -20,8 +20,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: theme.spacing(8),
-    padding: theme.spacing(3)
+    marginTop: theme.spacing(25),
+    padding: theme.spacing(3),
+    position: 'absolute',
   },
   loginButton: {
     margin: 15
@@ -59,7 +60,8 @@ function Login(props){
     const classes = useStyles();
     if (user.loggedIn) return <Redirect to="/dashboard" />;
     return (
-      <Container component='main' maxWidth='xs' className={classes.mainContainer}>
+      <div className='background'>
+      <Container component='main'  className={classes.mainContainer}>
           <CssBaseline />
         <Paper className={classes.root}>
           <Avatar className={classes.avatarIcon}>
@@ -106,6 +108,7 @@ function Login(props){
           
         </Paper>
         </Container>
+        </div>
     );
   }
 

@@ -63,9 +63,13 @@ export function createGroup(group_name, group_picture, description) {
     let data = axios
         .post("/api/creategroup", { group_name, group_picture, description })
         .then(res => res.data);
+
+    // let newGroupId = +data[0].group_id
+    //     axios.post(`/api/creategeneral/${newGroupId}`)
     return {
         type: CREATE_GROUP,
         payload: data
+
 
     };
 }
@@ -114,8 +118,15 @@ export default function (state = initialState, action) {
                 groupMessages: payload
             }
         case CREATE_GROUP + "_FULFILLED":
-            console.log(+payload[0].group_id);
+            console.log(payload[0].group_id)
+            if (payload && payload[0].group_id) {
+                let groupId = payload[0].group_id
+                console.log(groupId);
+                createGeneral(groupId)
+            }
+
             return { ...state, groups: payload, lastGroupId: +payload[0].group_id };
+
         case CREATE_GROUP + "_REJECTED":
             return { ...state, error: payload };
         case CREATE_GENERAL + '_FULFILLED':

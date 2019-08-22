@@ -101,9 +101,6 @@ function Group(props) {
             let { group_id } = selectedGroup[0]
             props.getGroupMessages(+group_id)
             props.getRooms(+group_id)
-            if (!rooms.length) {
-                props.createGeneral(group_id)
-            }
         }
     }, [selectedGroup[0]])
 
@@ -132,7 +129,7 @@ function Group(props) {
                                 <Typography variant='h5' component='h5'>
                                     {group_name}
                                 </Typography>
-                                <Typography variant='p'>
+                                <Typography component='p'>
                                     #{currentRoom}
                                 </Typography>
                             </div>
@@ -144,11 +141,14 @@ function Group(props) {
                         <div className={classes.topicsWindow}>
                             <List>
                                 {
-                                    rooms.map(topic => (
-                                        <ListItem button key={topic.room_id} onClick={() => changeCurrentRoom(topic.room_name)}>
-                                            <ListItemText>#{topic.room_name}</ListItemText>
-                                        </ListItem>
-                                    ))
+                                    rooms.map(topic => {
+                                            return (
+                                                <ListItem button key={topic.room_id} onClick={() => changeCurrentRoom(topic.room_name)}>
+                                                    <ListItemText>#{topic.room_name}</ListItemText>
+                                                </ListItem>
+                                            )
+                                        
+                                    })
                                 }
                                 <Fab color="primary" aria-label="add" size='small' className={classes.fab}>
                                     <AddIcon />

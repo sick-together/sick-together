@@ -55,4 +55,11 @@ module.exports = {
     let rooms = await db.get_rooms(+groupId)
     res.send(rooms)
   },
+  async createRoom(req, res) {
+    let { groupId } = req.params
+    let { newRoom } = req.body
+    const db = req.app.get('db')
+    let rooms = await db.create_room([newRoom, groupId])
+    res.send(rooms)
+  }
 };

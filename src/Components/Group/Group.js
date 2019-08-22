@@ -17,7 +17,12 @@ import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import io from "socket.io-client";
+// const io = require('socket.io-client'); 
+// const socket = io('http://localhost:3000'); 
+
+import useSocket from 'use-socket.io-client'; 
+import { useImmer } from 'use-immer'; 
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -64,27 +69,90 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+
 function Group(props) {
+
   let { selectedGroup, groupMessages } = props.groups;
   const classes = useStyles();
-  console.log("selected group:", selectedGroup);
-  const [textValue, changeTextValue] = React.useState("");
+
+  const [id, setId] = useState(''); 
+  const [nameInput, setNameInput] = useState(''); 
+  const [room, setRoom] = useState(''); 
+  const [input, setInput] = useState(''); 
+
+
+  const [socket] = useSocket('https://localhost:3000'); 
+  socket.connect(); 
+
+  const[messages, setMessages] = useImmer([]); 
+  const [online, setOnline] = useImmer([]); 
 
   useEffect(() => {
-    if (selectedGroup && selectedGroup[0]) {
-      let { group_id } = selectedGroup[0];
-      props.getGroupMessages(+group_id);
-    }
-  }, [selectedGroup[0]]);
+    socket.on('messge que', (nick,message) => {
+      setMessages(draft => {
+        draft.push(nick,message)
+      })
+    })
 
-  function insertMessage(newMessage, groupId) {
-    props.addMessage(newMessage, groupId);
-    changeTextValue("");
-  }
+    socket.on('update', message => setMessages(draft => {
+      draft.push(['',message]); 
+    })); 
 
-  if (selectedGroup && selectedGroup[0]) {
-    let { group_name, group_picture, description, group_id } = selectedGroup[0];
+    
+  })
+
+
+  // let { selectedGroup, groupMessages } = props.groups;
+  // const classes = useStyles();
+  // console.log("selected group:", selectedGroup);
+  // const [textValue, changeTextValue] = React.useState("");
+  // const [inRoom, setInRoom] = useState(false); 
+
+  // useEffect(() => {
+  //   if (selectedGroup && selectedGroup[0]) {
+  //     let { group_id } = selectedGroup[0];
+  //     props.getGroupMessages(+group_id);
+  //   }
+  // }, [selectedGroup[0]]);
+
+  // useEffect(() => {
+  //   if(inRoom) {
+  //     console.log('joining room'); 
+  //     socket.emit('room', {room: 'test-room'}); 
+  //   }
+  //   return () => {
+  //     if(inRoom) {
+  //       console.log('leaving room'); 
+  //       socket.emit('leave room', {
+  //         room: 'test-room'
+  //       })
+  //     }
+  //   }
+  // }); 
+
+  // const handleInRoom = () => {
+  //   inRoom 
+  //   ? setInRoom(false)
+  //   : setInRoom(true); 
+  // }
+
+  // const handleNewMessage = () => {
+  //   console.log('emitting new message'); 
+  //   socket.emit('new message', {
+  //     room: 'test-room'
+  //   }); 
+  // }
+
+
+  // function insertMessage(newMessage, groupId) {
+  //   props.addMessage(newMessage, groupId);
+  //   changeTextValue("");
+  // }
+
+  // if (selectedGroup && selectedGroup[0]) {
+  //   let { group_name, group_picture, description, group_id } = selectedGroup[0];
     return (
+      
       <div>
         <Paper className={classes.root}>
           <Typography

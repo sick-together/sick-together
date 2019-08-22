@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CREATE_GROUP, GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, ADD_MESSAGE, CREATE_GROUP } from './actionTypes';
+import { CREATE_GROUP, GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, ADD_MESSAGE} from './actionTypes';
 
 const initialState = {
     groups: [],

@@ -13,19 +13,19 @@ import GroupIcon from "@material-ui/icons/Group";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 
 const useStyles = makeStyles({
-    // feedMaster: {
-    //   width: '100%'
-    // },
-    card: {
-        maxWidth: 725,
-        width: '85vw',
-        minWidth: '50vw',
-        marginTop: 10
-    },
-    groupButtons: {
-        display: 'flex',
-        justifyContent: 'space-between'
-    }
+  // feedMaster: {
+  //   width: '100%'
+  // },
+  card: {
+    maxWidth: 725,
+    width: '85vw',
+    minWidth: '50vw',
+    marginTop: 10
+  },
+  groupButtons: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  }
 });
 
 function Groups(props) {
@@ -33,52 +33,52 @@ function Groups(props) {
   let { groups } = props.groups;
   console.log(groups);
   return (
-  groups.map(group => {
-    return (
-      <div className={classes.feedMaster}>
-        <Card className={classes.card}>
-          <a
-            href={"#/group/" + group.group_id}
-            key={group.group_id}
-            onClick={() => props.getSelectedGroup(group.group_id)}
-          >
-            <CardActionArea>
-              <CardMedia
-                component="img"
-                alt="Add group to join the chat!"
-                height="140"
-                image={group.group_picture}
-                title="Contemplative Reptile"
-              />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
-                  {group.group_name}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {group.description}
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </a>
-          <CardActions className={classes.groupButtons}>
-            <Button size="small" color="primary">
-              <GroupIcon className={classes.groupicon} />
-            </Button>
-            <Button size="small" color="primary">
-              <AddBoxIcon className={classes.addicon} />
-            </Button>
-            <div>
-              {group.user_id === props.user.user.id ? (
-                <button onClick={() => props.deleteGroup(group.group_id)}>
-                  Delete
+    groups.map(group => {
+      return (
+        <div className={classes.feedMaster} key={group.group_id}>
+          <Card className={classes.card}>
+            <a
+              href={"#/group/" + group.group_id}
+              key={group.group_id}
+              onClick={() => props.getSelectedGroup(group.group_id)}
+            >
+              <CardActionArea>
+                <CardMedia
+                  component="img"
+                  alt="Add group to join the chat!"
+                  height="140"
+                  image={group.group_picture}
+                  title="Contemplative Reptile"
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    {group.group_name}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                    {group.description}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </a>
+            <CardActions className={classes.groupButtons}>
+              <Button size="small" color="primary">
+                <GroupIcon className={classes.groupicon} />
+              </Button>
+              <Button size="small" color="primary">
+                <AddBoxIcon className={classes.addicon} />
+              </Button>
+              <div>
+                {group.user_id === props.user.user.id ? (
+                  <button onClick={() => props.deleteGroup(group.group_id)}>
+                    Delete
                 </button>
-              ) : null}
-            </div>
-          </CardActions>
-        </Card>
-      </div>
-    );
-  }));
+                ) : null}
+              </div>
+            </CardActions>
+          </Card>
+        </div>
+      );
+    }));
 }
 
 function mapStateToProps(state) {

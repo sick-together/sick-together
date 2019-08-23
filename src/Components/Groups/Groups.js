@@ -13,14 +13,19 @@ import GroupIcon from "@material-ui/icons/Group";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 
 const useStyles = makeStyles({
-  card: {
-    maxWidth: 725,
-    marginTop: 10
-  },
-  groupButtons: {
-    display: "flex",
-    justifyContent: "space-between"
-  }
+    // feedMaster: {
+    //   width: '100%'
+    // },
+    card: {
+        maxWidth: 725,
+        width: '85vw',
+        minWidth: '50vw',
+        marginTop: 10
+    },
+    groupButtons: {
+        display: 'flex',
+        justifyContent: 'space-between'
+    }
 });
 
 function Groups(props) {
@@ -30,7 +35,7 @@ function Groups(props) {
   return (
   groups.map(group => {
     return (
-      <div>
+      <div className={classes.feedMaster}>
         <Card className={classes.card}>
           <a
             href={"#/group/" + group.group_id}
@@ -40,7 +45,7 @@ function Groups(props) {
             <CardActionArea>
               <CardMedia
                 component="img"
-                alt="Contemplative Reptile"
+                alt="Add group to join the chat!"
                 height="140"
                 image={group.group_picture}
                 title="Contemplative Reptile"

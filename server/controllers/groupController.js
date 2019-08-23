@@ -11,6 +11,13 @@ module.exports = {
     ]);
     res.send(groups);
   },
+  async createGeneral(req, res) {
+    let { groupId } = req.params
+    const db = req.app.get('db')
+    let initialRoom = await db.create_general(+groupId)
+      .catch(err => console.log('Error with adding initial room', err))
+    res.send(initialRoom)
+  },
   async deleteGroup(req, res) {
     let { group_id } = req.params;
     const db = req.app.get("db");
@@ -35,11 +42,24 @@ module.exports = {
     res.send(messages);
   },
   async addMessage(req, res) {
-    let { newMessage, groupId } = req.body;
+    let { newMessage, groupId, roomId } = req.body;
     const db = req.app.get("db");
     let messages = await db
-      .add_message([newMessage, groupId, +req.session.user.id])
+      .add_message([newMessage, groupId, roomId, +req.session.user.id])
       .catch(err => console.log("Error with adding a message", err));
     res.send(messages);
+  },
+  async getRooms(req, res) {
+    let { groupId } = req.params
+    const db = req.app.get('db')
+    let rooms = await db.get_rooms(+groupId)
+    res.send(rooms)
+  },
+  async createRoom(req, res) {
+    let { groupId } = req.params
+    let { newRoom } = req.body
+    const db = req.app.get('db')
+    let rooms = await db.create_room([newRoom, groupId])
+    res.send(rooms)
   }
 };

@@ -2,13 +2,15 @@ require('dotenv').config({ path: __dirname + '/../.env' })
 const express = require('express')
 const massive = require('massive')
 const session = require('express-session')
+//socket require
+const socket = require('socket.io');
 const ac = require('./controllers/authController')
 const gc = require('./controllers/groupController')
 const initSession = require('./middleware/initSession');
 const authCheck = require('./middleware/authCheck');
 const { SERVER_PORT, SESSION_SECRET, CONNECTION_STRING } = process.env
-//socket require
-const socket = require('socket.io');
+
+
 const app = express()
 
 //used in the socket
@@ -23,39 +25,6 @@ app.use(session({
     resave: false,
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 365 }
 }))
-
-//allow joining a chat
-io.on('join room', async data => {
-    let { room } = data;
-    const db = app.get('db');
-    console.log("You just joined ", room);
-    const [existingRoom] = await db.look_for_room(room);
-    console.log('exist', existingRoom);
-    if (!existingRoom) await db.create_room(room);
-    let messages = await db.get_messages(room);
-    console.log('messages', messages);
-    socket.join(room);
-    io.in(room).emit('room entered', messages);
-});
-
-//send messages
-io.on('send message', async data => {
-    const { room, message, sender } = data;
-    console.log(room, message, sender);
-    const db = app.get('db');
-    await db.send_message(room, message, sender)
-    let messages = await db.get_messages(room);
-    if (messages.length <= 1) io.to(room).emit('room entered', messages);
-    console.log('messages', messages);
-    io.to(data.room).emit('message sent', messages);
-});
-
-//disconnected
-io.on('disconnect', () => {
-    console.log('Disconnected from room');
-});
-
-
 
 massive(CONNECTION_STRING).then(db => {
     app.set('db', db)
@@ -80,6 +49,42 @@ app.get('/api/getgroupmessages/:groupId', gc.getGroupMessages)
 app.get('/api/getrooms/:groupId', gc.getRooms)
 app.post('/api/addmessage', gc.addMessage)
 app.delete('/api/deletegroup/:group_id', authCheck, gc.deleteGroup)
+
+
+io.on("connection", socket => {
+    console.log("User Connected");
+
+    socket.on('join room', async data => {
+        let { group, groupName } = data
+        const db = app.get('db');
+        console.log("You just joined:", groupName);
+        let messages = await db.get_messages(group);
+        console.log('messages', messages);
+        socket.join(group);
+        io.to(group).emit('room joined', messages);
+
+    })
+    //send messages
+    socket.on('message sent', async data => {
+        const { message, roomId, groupId, userId } = data;
+        console.log(message, roomId, groupId, userId)
+        const db = app.get('db');
+        await db.add_message(message, groupId, roomId, userId)
+        let messages = await db.get_messages(groupId);
+        if (messages.length <= 1) io.to(groupId).emit('room joined', messages);
+        console.log('messages', messages);
+        io.in(groupId).emit('message dispatched', messages);
+    });
+
+    //disconnected
+    socket.on('disconnect', () => {
+        console.log('Disconnected from room');
+    });
+
+})
+
+
+
 
 
 

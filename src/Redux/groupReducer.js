@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, GET_ROOMS, ADD_MESSAGE, CREATE_GROUP, CREATE_GENERAL, DELETE_GROUP, ADD_ROOM } from './actionTypes';
+import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, GET_ROOMS, ADD_MESSAGE, CREATE_GROUP, CREATE_GENERAL, DELETE_GROUP, ADD_ROOM, CLEAR_SELECTED } from './actionTypes';
 
 const initialState = {
     groups: [],
@@ -91,6 +91,11 @@ export function addNewRoom(newRoom, group_id) {
         payload: data
     }
 }
+export function clearSelectedData() {
+    return {
+        type: CLEAR_SELECTED
+    }
+}
 
 export function deleteGroup(group_id) {
     let data = axios.delete(`/api/deletegroup/${group_id}`)
@@ -110,6 +115,14 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 selectedGroup: payload
+            }
+        case CLEAR_SELECTED:
+            console.log('Cleared selected data')
+            return {
+                ...state,
+                selectedGroup: {},
+                groupMessages: {},
+                rooms: []
             }
         case GET_GROUP_MESSAGES + '_FULFILLED':
             return {

@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { connect } from 'react-redux'
+import io from 'socket.io-client';
 import { logout, getUser } from '../../Redux/userReducer.js';
 import { Link } from 'react-router-dom'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -24,6 +25,9 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
+
+
+const socket = io()
 
 const drawerWidth = 220;
 
@@ -96,7 +100,10 @@ function Header(props) {
     function handleDrawerClose() {
         setOpen(false);
     }
-
+    function logout() {
+        socket.disconnect()
+        props.logout()
+    }
 
     return (
         <div className={classes.root}>
@@ -139,7 +146,7 @@ function Header(props) {
                 <Divider />
                 <List>
                     {['My Account', 'Inbox', 'Send email', 'Logout'].map((text, index) => (
-                        <ListItem button key={text} onClick={text === 'Logout' ? props.logout : null}>
+                        <ListItem button key={text} onClick={text === 'Logout' ? logout : null}>
                             <ListItemIcon>{text === 'Logout' ? <ExitToAppIcon /> : <AccountCircleIcon />}</ListItemIcon>
                             <ListItemText primary={text} />
                         </ListItem>

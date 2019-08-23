@@ -49,7 +49,7 @@ function Register(props){
   };
   function handleKeyDown(e){
     if (e.keyCode === 13) {
-      this.signupUser();
+      signupUser();
     }
   };
 
@@ -107,11 +107,12 @@ function Register(props){
           fullWidth
           value={state}
           onChange={e => setStateUS(e.target.value)}
+          onKeyDown={handleKeyDown}
           className={classes.staInput}
           margin='normal'
           />
           
-            <Button variant='contained' color='primary' fullWidth className={classes.loginButton} onClick={signupUser} onKeyDown={handleKeyDown}>Register</Button>
+            <Button variant='contained' color='primary' fullWidth className={classes.loginButton} onClick={signupUser} >Register</Button>
               <Grid className={classes.registerLink}>
                 <Typography>Already have an account? </Typography>
                 <Link to='/' className="SignUp-Link">

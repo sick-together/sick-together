@@ -16,7 +16,6 @@ class App extends Component {
   }
   componentDidMount = () => {
     this.props.getUser()
-    console.log('Got User!')
   }
 
   leftNavClickHandler = () => {
@@ -26,6 +25,9 @@ class App extends Component {
 
   render() {
     let { user } = this.props
+    if (user) {
+      console.log(user)
+    }
     return (
       <div className="App" >
         {user && user.loggedIn ? (<header><Header leftNavClickHandler={this.leftNavClickHandler} />

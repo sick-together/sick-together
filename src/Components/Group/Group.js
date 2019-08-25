@@ -41,7 +41,8 @@ const useStyles = makeStyles(theme => ({
     groupTitle: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginLeft: '10px'
     },
     currentRoom: {
         marginLeft: '15px'
@@ -185,7 +186,7 @@ function Group(props) {
         setMessages(messages)
     }
 
-    function sendMessage(){
+    function sendMessage() {
         let { group_id } = selectedGroup[0]
         rooms.map(room => {
             if (room.room_name === currentRoom) {
@@ -201,7 +202,7 @@ function Group(props) {
                 changeTextValue('')
             }
         })
-}
+    }
 
     function enterMessage(e) {
         let { group_id } = selectedGroup[0]
@@ -223,39 +224,41 @@ function Group(props) {
         }
 
     }
-    function deleteMessage(messageId){
+    function deleteMessage(messageId) {
         let { group_id } = selectedGroup[0]
         socket.emit('delete message', {
             messageId,
             groupId: group_id
         })
     }
-    function setEditMsg(messageId){
+    function setEditMsg(messageId) {
         handleEditMessage(!editMessage)
         changeEditId(messageId)
     }
-    function saveMessageChanges(messageId){
-        let {group_id} = selectedGroup[0]
+    function saveMessageChanges(messageId) {
+        let { group_id } = selectedGroup[0]
         handleEditMessage(!editMessage)
-        if(newMessage !== ''){
-        socket.emit('edit message', {
-            messageId,
-            newMessage,
-            groupId: group_id
-        })}
+        if (newMessage !== '') {
+            socket.emit('edit message', {
+                messageId,
+                newMessage,
+                groupId: group_id
+            })
+        }
         changeNewMessage('')
         changeEditId(null)
     }
-    function enterMessageChanges(e){
-        if(e.keyCode === 13){
-            let {group_id} = selectedGroup[0]
+    function enterMessageChanges(e) {
+        if (e.keyCode === 13) {
+            let { group_id } = selectedGroup[0]
             handleEditMessage(!editMessage)
-            if(newMessage !== ''){
-            socket.emit('edit message', {
-                messageId: editId,
-                newMessage,
-                groupId: group_id
-            })}
+            if (newMessage !== '') {
+                socket.emit('edit message', {
+                    messageId: editId,
+                    newMessage,
+                    groupId: group_id
+                })
+            }
             changeNewMessage('')
             changeEditId(null)
         }
@@ -287,7 +290,7 @@ function Group(props) {
                 {!user.loggedIn ? <Redirect to='/' /> : null}
                 <Paper className={classes.root}>
                     <Paper style={{ borderBottom: '.5px solid rgba(189, 195, 199, 0.5)' }}>
-                        <section className={classes.flex} style={{padding: '10px'}}>
+                        <section className={classes.flex} style={{ padding: '10px' }}>
                             <Avatar alt="Group Avatar" src={group_picture} className={classes.bigAvatar} />
                             <div className={classes.groupTitle}>
                                 <Typography variant='h5' component='h5'>
@@ -352,31 +355,31 @@ function Group(props) {
                                                             <Typography variant='p' style={{ display: 'flex', alignItems: 'center' }}>{message.username}</Typography>
                                                         </section>
                                                         {message.userid === user.id ?
-                                                            (<div style={{ position: 'sticky', right: '0', marginRight: '10px', display: 'flex'}}>
-                                                               
-                                                                {!editMessage ? (<IconButton aria-label='edit' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => setEditMsg(message.message_id)}><EditIcon /></IconButton>) : (<IconButton aria-label='edit' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => saveMessageChanges(message.message_id)}><SaveIcon /></IconButton>) }
+                                                            (<div style={{ position: 'sticky', right: '0', marginRight: '10px', display: 'flex' }}>
+
+                                                                {!editMessage ? (<IconButton aria-label='edit' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => setEditMsg(message.message_id)}><EditIcon /></IconButton>) : (<IconButton aria-label='edit' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => saveMessageChanges(message.message_id)}><SaveIcon /></IconButton>)}
 
                                                                 <IconButton aria-label='delete' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => deleteMessage(message.message_id)}><DeleteIcon /></IconButton>
-                                                            </div>) : message.edited === true ? (<p style={{ display: 'flex', alignItems: 'center', marginRight: '5px', color: '#555962', fontSize: '12.5px'}}>(edited)</p>) : null }
+                                                            </div>) : message.edited === true ? (<p style={{ display: 'flex', alignItems: 'center', marginRight: '5px', color: '#555962', fontSize: '12.5px' }}>(edited)</p>) : null}
                                                     </Paper>
                                                     <Paper style={{ display: 'flex', textAlign: 'center', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, borderRadius: 0, borderBottomRightRadius: 4, borderBottomLeftRadius: 4, padding: '0px 7px' }}>
-                                                        <div style={{ display: 'flex', flexDirection: 'column'}}>
+                                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                             {!editMessage ? (<Typography variant='p' className={classes.messageContent}>
                                                                 {message.message}
-                                                            </Typography>) : editMessage && editId === message.message_id ?  (<input
-                                                            // id="standard-bare"
-                                                            style={{ width: '30vw' }}
-                                                            defaultValue={message.message}
-                                                            margin="normal"
-                                                            // inputProps={{ 'aria-label': 'bare' }}
-                                                            onChange={e => changeNewMessage(e.target.value)}
-                                                            onKeyDown={enterMessageChanges}/>) 
-                                                                : (<Typography variant='p' className={classes.messageContent}>
-                                                                    {message.message}
-                                                                    </Typography>) }
+                                                            </Typography>) : editMessage && editId === message.message_id ? (<input
+                                                                // id="standard-bare"
+                                                                style={{ width: '30vw' }}
+                                                                defaultValue={message.message}
+                                                                margin="normal"
+                                                                // inputProps={{ 'aria-label': 'bare' }}
+                                                                onChange={e => changeNewMessage(e.target.value)}
+                                                                onKeyDown={enterMessageChanges} />)
+                                                                    : (<Typography variant='p' className={classes.messageContent}>
+                                                                        {message.message}
+                                                                    </Typography>)}
                                                         </div>
                                                         <div>
-                                                            <Typography variant='p' style={{color: '#555962', fontSize: '12.5px', display: 'flex'}}>
+                                                            <Typography variant='p' style={{ color: '#555962', fontSize: '12.5px', display: 'flex' }}>
                                                                 {moment(message.timestamp).calendar()}
                                                             </Typography>
                                                         </div>
@@ -384,12 +387,12 @@ function Group(props) {
                                                 </div>
                                             )
                                         } else return null
-                                    }) : <Typography varient='p'>
+                                    }) : <Typography varient='p' style={{ marginBottom: '10px', marginLeft: '10px'}}>
                                         This chat is empty!
                                     </Typography>
                                 }
                             </section>
-                            <Paper className={classes.textField} style={{ borderTop: '0.5px solid rgba(189, 195, 199, 0.5)', borderRadius: 0, borderBottomRightRadius: 4, borderBottomLeftRadius: 4}}>
+                            <Paper className={classes.textField} style={{ borderTop: '0.5px solid rgba(189, 195, 199, 0.5)', borderRadius: 0, borderBottomRightRadius: 4, borderBottomLeftRadius: 4 }}>
                                 <TextField
                                     id="standard-name"
                                     label="Send a message!"

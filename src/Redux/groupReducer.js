@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, GET_ROOMS, ADD_MESSAGE, CREATE_GROUP, CREATE_GENERAL, DELETE_GROUP, ADD_ROOM, CLEAR_SELECTED } from './actionTypes';
+import { GET_GROUPS, GET_SELECTED_GROUP, GET_GROUP_MESSAGES, GET_ROOMS, ADD_MESSAGE, CREATE_GROUP, CREATE_GENERAL, DELETE_GROUP, ADD_ROOM, CLEAR_SELECTED, SEARCH_GROUPS } from './actionTypes';
 
 const initialState = {
     groups: [],
@@ -58,28 +58,18 @@ export const addMessage = (newMessage, groupId, roomId) => {
     }
 
 }
-
-// export const deleteMessage = (messageId, groupId) => {
-//     let data = axios.delete(`/api/deletemessage/`, { messageId, groupId })
-//         .then(res => res.data)
-//         return {
-//             type: DELETE_MESSAGE,
-//             payload: data
-//         }
-// }
-
-// export const editMessage = (newMessage, messageId, groupId) => {
-//     let data = axios.put('/api/editmessage', { newMessage, messageId, groupId })
-//         .then(res => res.data)
-//         return {
-//             type: EDIT_MESSAGE,
-//             payload: data
-//         }
-// }
-
-export function createGroup(group_name, group_picture, description) {
+export function searchGroups(myAreaChecked, searchInput) {
+    let data = axios.get(`/api/searchgroups?myareachecked=${myAreaChecked}&search=${searchInput}`)
+        .then(res => res.data)
+        .catch(err => console.log('Error with the search', err))
+    return {
+        type: SEARCH_GROUPS,
+        payload: data
+    }
+}
+export function createGroup(group_name, group_picture, description, location) {
     let data = axios
-        .post("/api/creategroup", { group_name, group_picture, description })
+        .post("/api/creategroup", { group_name, group_picture, description, location })
         .then(res => res.data);
 
     // let newGroupId = +data[0].group_id
@@ -87,7 +77,6 @@ export function createGroup(group_name, group_picture, description) {
     return {
         type: CREATE_GROUP,
         payload: data
-
 
     };
 }
@@ -125,6 +114,11 @@ export default function (state = initialState, action) {
     let { type, payload } = action
     switch (type) {
         case GET_GROUPS + '_FULFILLED':
+            return {
+                ...state,
+                groups: payload
+            }
+        case SEARCH_GROUPS + '_FULFILLED':
             return {
                 ...state,
                 groups: payload

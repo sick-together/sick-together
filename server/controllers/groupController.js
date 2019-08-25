@@ -25,10 +25,26 @@ module.exports = {
     let groups = await db.delete_group([+group_id]);
     res.send(groups);
   },
+  async joinGroup(req, res) {
+    let {id} = req.session.user
+    let {group_id} = req.params
+    const db = req.app.get('db')
+    let joinedGroups = await db.join_group([
+      id,
+      group_id
+    ])
+    res.send(joinedGroups)
+  },
   async getGroups(req, res) {
     const db = req.app.get("db");
     let groups = await db.get_groups();
     res.send(groups);
+  },
+  async getJoinedGroups(req, res) {
+    let { id } = req.session.user
+    const db = req.app.get('db')
+    let joinedGroups = await db.get_joined_groups(id)
+    res.send(joinedGroups)
   },
   async searchGroups(req, res){
     let {search, myareachecked} = req.query

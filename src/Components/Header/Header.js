@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import clsx from "clsx";
 import { connect } from "react-redux";
 import { logout, getUser } from "../../Redux/userReducer.js";
@@ -24,6 +24,7 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
+import { getJoinedGroups } from "../../Redux/groupReducer.js";
 
 const drawerWidth = 220;
 
@@ -88,6 +89,11 @@ function Header(props) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const { user } = props;
+
+  useEffect(() => {
+    props.getJoinedGroups();
+    console.log(user.joinedGroups);
+  });
 
   function handleDrawerOpen() {
     setOpen(true);
@@ -162,7 +168,7 @@ function Header(props) {
         </List>
         <Divider />
         <List>
-          {["All mail", "Trash", "Create New Group"].map((text, index) => (
+          {["Joined Groups", "Create New Group"].map((text, index) => (
             <div key={text}>
               {text === "Create New Group" ? (
                 <Link to="/creategroup">
@@ -208,5 +214,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-  { logout, getUser }
+  { logout, getUser, getJoinedGroups }
 )(Header);

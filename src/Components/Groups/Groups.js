@@ -1,5 +1,5 @@
 import React from "react";
-import { getSelectedGroup, deleteGroup } from "../../Redux/groupReducer.js";
+import { getSelectedGroup, joinGroup, deleteGroup } from "../../Redux/groupReducer.js";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -20,7 +20,8 @@ const useStyles = makeStyles({
         maxWidth: 725,
         width: '85vw',
         minWidth: '50vw',
-        marginTop: 10
+        marginTop: 10,
+        marginBottom: 10
     },
     groupButtons: {
         display: 'flex',
@@ -31,7 +32,14 @@ const useStyles = makeStyles({
 function Groups(props) {
   const classes = useStyles();
   let { groups } = props.groups;
-  console.log(groups);
+  console.log('props :', props);
+  let arrayOfJoinedIds = []
+  if(groups.joinedGroups) {
+    console.log('hit if statement')
+    groups.joinedGroups.forEach(item => arrayOfJoinedIds.push(item.group_id))
+  }
+  console.log(arrayOfJoinedIds)
+  
   return (
   groups.map(group => {
     return (
@@ -64,13 +72,25 @@ function Groups(props) {
             <Button size="small" color="primary">
               <GroupIcon className={classes.groupicon} />
             </Button>
-            <Button size="small" color="primary">
+            <div>
+              {/* {props.joinedGroups.includes()} */}
+              <Button 
+            onClick={() => props.joinGroup(group.group_id)}
+            size="small" color="primary">
               <AddBoxIcon className={classes.addicon} />
             </Button>
+            </div>
             <div>
               {group.user_id === props.user.user.id ? (
                 <button onClick={() => props.deleteGroup(group.group_id)}>
                   Delete
+                </button>
+              ) : null}
+            </div>
+            <div>
+              {group.user_id === props.user.user.id ? (
+                <button onClick={() => props.editGroup(group.group_id)}>
+                  Edit Group
                 </button>
               ) : null}
             </div>
@@ -89,5 +109,5 @@ function mapStateToProps(state) {
 }
 export default connect(
   mapStateToProps,
-  { getSelectedGroup, deleteGroup }
+  { getSelectedGroup, joinGroup, deleteGroup }
 )(Groups);

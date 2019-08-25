@@ -80,6 +80,8 @@ app.get('/api/getgroupmessages/:groupId', gc.getGroupMessages)
 app.get('/api/getrooms/:groupId', gc.getRooms)
 app.post('/api/addmessage', gc.addMessage)
 app.delete('/api/deletegroup/:group_id', authCheck, gc.deleteGroup)
+app.post('/api/joingroup/:group_id', authCheck, gc.joinGroup)
+app.get('/api/getjoinedgroups', authCheck, gc.getJoinedGroups)
 
 
 

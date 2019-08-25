@@ -37,11 +37,10 @@ function CreateGroup(props) {
   const classes = useStyles();
 
   function handleSubmit() {
-    let { id } = props.user;
     setGroupName("");
     setGroupPicture("");
     setDescription("");
-    props.createGroup(group_name, id, group_picture, description);
+    props.createGroup(group_name, group_picture, description);
   }
 
   return (

@@ -10,7 +10,9 @@ import {
   DELETE_GROUP,
   ADD_ROOM,
   JOIN_GROUP,
-  GET_JOINED_GROUPS
+  GET_JOINED_GROUPS,
+  CLEAR_SELECTED,
+  SEARCH_GROUPS
 } from "./actionTypes";
 
 const initialState = {
@@ -69,10 +71,26 @@ export const addMessage = (newMessage, groupId, roomId) => {
     payload: data
   };
 };
-
-export function createGroup(group_name, group_picture, description) {
+export function searchGroups(myAreaChecked, searchInput) {
   let data = axios
-    .post("/api/creategroup", { group_name, group_picture, description })
+    .get(
+      `/api/searchgroups?myareachecked=${myAreaChecked}&search=${searchInput}`
+    )
+    .then(res => res.data)
+    .catch(err => console.log("Error with the search", err));
+  return {
+    type: SEARCH_GROUPS,
+    payload: data
+  };
+}
+export function createGroup(group_name, group_picture, description, location) {
+  let data = axios
+    .post("/api/creategroup", {
+      group_name,
+      group_picture,
+      description,
+      location
+    })
     .then(res => res.data);
 
   // let newGroupId = +data[0].group_id
@@ -100,6 +118,11 @@ export function addNewRoom(newRoom, group_id) {
     payload: data
   };
 }
+export function clearSelectedData() {
+  return {
+    type: CLEAR_SELECTED
+  };
+}
 
 export function deleteGroup(group_id) {
   let data = axios.delete(`/api/deletegroup/${group_id}`).then(res => res.data);
@@ -124,10 +147,23 @@ export default function(state = initialState, action) {
         ...state,
         groups: payload
       };
+    case SEARCH_GROUPS + "_FULFILLED":
+      return {
+        ...state,
+        groups: payload
+      };
     case GET_SELECTED_GROUP + "_FULFILLED":
       return {
         ...state,
         selectedGroup: payload
+      };
+    case CLEAR_SELECTED:
+      console.log("Cleared selected data");
+      return {
+        ...state,
+        selectedGroup: {},
+        groupMessages: {},
+        rooms: []
       };
     case GET_GROUP_MESSAGES + "_FULFILLED":
       return {
@@ -152,16 +188,6 @@ export default function(state = initialState, action) {
         createGeneral(groupId);
       }
       return { ...state, groups: payload, lastGroupId: +payload[0].group_id };
-    case CREATE_GROUP + "_REJECTED":
-      return { ...state, error: payload };
-    case CREATE_GENERAL + "_FULFILLED":
-      return {
-        ...state
-      };
-    case ADD_ROOM + "_FULFILLED":
-      return { ...state, rooms: payload };
-    case DELETE_GROUP + "_FULFILLED":
-      return { ...state, groups: payload };
     case JOIN_GROUP + "_FULFILLED":
       return { ...state, joinedGroups: payload };
     case GET_JOINED_GROUPS + "_FULFILLED":

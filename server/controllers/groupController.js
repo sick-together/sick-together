@@ -1,13 +1,14 @@
 module.exports = {
   async createGroup(req, res) {
     let { id } = req.session.user;
-    let { group_name, group_picture, description } = req.body;
+    let { group_name, group_picture, description, location } = req.body;
     const db = req.app.get("db");
     let groups = await db.create_group([
       group_name,
       id,
       group_picture,
-      description
+      description,
+      location
     ]);
     res.send(groups);
   },
@@ -44,6 +45,19 @@ module.exports = {
     const db = req.app.get('db')
     let joinedGroups = await db.get_joined_groups(id)
     res.send(joinedGroups)
+  },
+  async searchGroups(req, res){
+    let {search, myareachecked} = req.query
+    const sqlSearch = `%${search}%`
+    const db = req.app.get('db')
+    if (myareachecked === 'true' && search){
+      let results = await db.search_all(sqlSearch)
+      res.send(results)
+    }else {
+      let results = await db.search_local([sqlSearch, req.session.user.city, req.session.user.state])
+      res.send(results)
+    }
+
   },
   async getSelected(req, res) {
     let { groupId } = req.params;

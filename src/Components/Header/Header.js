@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import clsx from "clsx";
+import io from 'socket.io-client'
 import { connect } from "react-redux";
 import { logout, getUser } from "../../Redux/userReducer.js";
 import { Link } from "react-router-dom";
@@ -25,6 +26,9 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import { getJoinedGroups } from "../../Redux/groupReducer.js";
+
+
+const socket = io()
 
 const drawerWidth = 220;
 
@@ -68,7 +72,6 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -94,6 +97,12 @@ function Header(props) {
     props.getJoinedGroups();
     console.log(user.joinedGroups);
   });
+
+
+  useEffect(() => {
+    props.getUser()
+  }, [])
+
 
   function handleDrawerOpen() {
     setOpen(true);
@@ -123,7 +132,7 @@ function Header(props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            <Link to="/dashboard"> Sick Together</Link>
+            <Link to="/dashboard"> <i className="fas fa-comment-medical" style={{ marginRight: '5px' }} /> Sick Together</Link>
           </Typography>
         </Toolbar>
       </AppBar>
@@ -141,13 +150,13 @@ function Header(props) {
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (
-              <ChevronRightIcon />
-            )}
+                <ChevronRightIcon />
+              )}
           </IconButton>
         </div>
         <Divider />
         <List>
-          {["My Account", "Inbox", "Send email", "Logout"].map(
+          {["My Account", "Inbox", "Logout"].map(
             (text, index) => (
               <ListItem
                 button
@@ -157,9 +166,11 @@ function Header(props) {
                 <ListItemIcon>
                   {text === "Logout" ? (
                     <ExitToAppIcon />
-                  ) : (
+                  ) : text === 'My Account' ? (
                     <AccountCircleIcon />
-                  )}
+                  ) : text === 'Inbox' ? (
+                    <InboxIcon />
+                  ) : null}
                 </ListItemIcon>
                 <ListItemText primary={text} />
               </ListItem>
@@ -187,13 +198,13 @@ function Header(props) {
                   </ListItem>
                 </Link>
               ) : (
-                <ListItem button key={text}>
-                  <ListItemIcon>
-                    <MailIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItem>
-              )}
+                  <ListItem button key={text}>
+                    <ListItemIcon>
+                      <MailIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItem>
+                )}
             </div>
           ))}
         </List>

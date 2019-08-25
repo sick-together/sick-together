@@ -25,6 +25,7 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
+import { getJoinedGroups } from "../../Redux/groupReducer.js";
 
 
 const socket = io()
@@ -93,6 +94,10 @@ function Header(props) {
   const [open, setOpen] = React.useState(false);
   const { user } = props;
 
+  useEffect(() => {
+    props.getJoinedGroups();
+    console.log(user.joinedGroups);
+  });
 
 
   useEffect(() => {
@@ -175,7 +180,7 @@ function Header(props) {
         </List>
         <Divider />
         <List>
-          {["Create New Group"].map((text, index) => (
+          {["Joined Groups", "Create New Group"].map((text, index) => (
             <div key={text}>
               {text === "Create New Group" ? (
                 <Link to="/creategroup">
@@ -221,5 +226,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-  { logout, getUser }
+  { logout, getUser, getJoinedGroups }
 )(Header);

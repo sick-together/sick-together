@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import 'react-tenor/dist/styles.css'
 import Header from './Components/Header/Header'
 import LeftNav from './Components/LeftNav/LeftNav'
 import { connect } from 'react-redux'

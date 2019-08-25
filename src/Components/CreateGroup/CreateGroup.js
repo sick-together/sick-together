@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { createGroup } from "../../Redux/groupReducer";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -34,18 +34,19 @@ function CreateGroup(props) {
   const [group_name, setGroupName] = React.useState("");
   const [group_picture, setGroupPicture] = React.useState("");
   const [description, setDescription] = React.useState("");
+  const {user} = props
   const classes = useStyles();
 
   function handleSubmit() {
-    let { id } = props.user;
     setGroupName("");
     setGroupPicture("");
     setDescription("");
-    props.createGroup(group_name, id, group_picture, description);
+    props.createGroup(group_name, group_picture, description);
   }
 
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
+      {!user.loggedIn ? <Redirect to='/' /> : null}
       <TextField
       className={classes.textFields}
         name="group_name"

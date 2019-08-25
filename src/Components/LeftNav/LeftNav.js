@@ -6,10 +6,10 @@ import { withRouter } from 'react-router-dom'
 
 export class LeftNav extends Component {
 
-    componentDidMount = () => {
-        this.props.getUser()
-        console.log('Got User!')
-    }
+    // componentDidMount = () => {
+    //     this.props.getUser()
+    //     console.log('Got User!')
+    // }
     render() {
         let { username, profilePic } = this.props
         let navClasses = 'nav-container'

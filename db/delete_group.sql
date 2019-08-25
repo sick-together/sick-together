@@ -4,6 +4,9 @@ where group_id = $1;
 delete from rooms
 where group_id = $1;
 
+delete from joined_groups
+where group_id = $1;
+
 delete from groups
 where group_id = $1;
 

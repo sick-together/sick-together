@@ -59,22 +59,38 @@ io.on("connection", socket => {
         const db = app.get('db');
         console.log("You just joined:", groupName);
         let messages = await db.get_messages(group);
-        console.log('messages', messages);
+        // console.log('messages', messages);
         socket.join(group);
         io.to(group).emit('room joined', messages);
 
     })
     //send messages
     socket.on('message sent', async data => {
-        const { message, roomId, groupId, userId } = data;
+        const { message, roomId, groupId, userId, timeStamp } = data;
         console.log(message, roomId, groupId, userId)
         const db = app.get('db');
-        await db.add_message(message, groupId, roomId, userId)
+        await db.add_message(message, groupId, roomId, userId, timeStamp)
         let messages = await db.get_messages(groupId);
         if (messages.length <= 1) io.to(groupId).emit('room joined', messages);
-        console.log('messages', messages);
+        // console.log('messages', messages);
         io.in(groupId).emit('message dispatched', messages);
     });
+
+    socket.on('delete message', async data => {
+        const {messageId, groupId} = data
+        const db = app.get('db')
+        await db.delete_message(messageId)
+        let messages = await db.get_messages(groupId)
+        io.in(groupId).emit('message dispatched', messages)
+    })
+
+    socket.on('edit message', async data => {
+        const {messageId, newMessage, groupId} = data
+        const db = app.get('db')
+        await db.edit_message(messageId, newMessage)
+        let messages = await db.get_messages(groupId)
+        io.in(groupId).emit('message dispatched', messages)
+    })
 
     //disconnected
     socket.on('disconnect', () => {

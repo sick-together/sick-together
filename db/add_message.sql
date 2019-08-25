@@ -1,5 +1,5 @@
-INSERT INTO messages(message, group_id, room_id, user_id)
-values ($1,$2,$3,$4);
+INSERT INTO messages(message, group_id, room_id, user_id, timestamp)
+values ($1,$2,$3,$4,$5);
 
 SELECT 
 groups.group_id AS groupid,

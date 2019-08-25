@@ -4,8 +4,11 @@ users.user_id AS userid,
 username,
 profile_pic,
 message,
+message_id,
 messages.room_id,
-room_name
+room_name,
+timestamp,
+edited
 FROM messages
 INNER JOIN users ON users.user_id = messages.user_id
 INNER JOIN groups ON groups.group_id = messages.group_id

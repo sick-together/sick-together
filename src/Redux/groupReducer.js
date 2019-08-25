@@ -59,6 +59,24 @@ export const addMessage = (newMessage, groupId, roomId) => {
 
 }
 
+// export const deleteMessage = (messageId, groupId) => {
+//     let data = axios.delete(`/api/deletemessage/`, { messageId, groupId })
+//         .then(res => res.data)
+//         return {
+//             type: DELETE_MESSAGE,
+//             payload: data
+//         }
+// }
+
+// export const editMessage = (newMessage, messageId, groupId) => {
+//     let data = axios.put('/api/editmessage', { newMessage, messageId, groupId })
+//         .then(res => res.data)
+//         return {
+//             type: EDIT_MESSAGE,
+//             payload: data
+//         }
+// }
+
 export function createGroup(group_name, group_picture, description) {
     let data = axios
         .post("/api/creategroup", { group_name, group_picture, description })

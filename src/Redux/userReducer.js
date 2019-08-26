@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LOGIN, LOGOUT, SIGNUP, GET_USER } from './actionTypes';
+import { LOGIN, LOGOUT, SIGNUP, GET_USER, EDIT_USER, EDIT_USER_PROFILEPIC } from './actionTypes';
 
 const initialState = {
     user: {},
@@ -46,6 +46,20 @@ export const getUser = () => {
         payload: data
     };
 };
+
+export const editUser = (user_id, username, city, state) => {
+    console.log(city)
+    let data = axios.put(`/api/edit/${user_id}`, {username, city, state})
+    .then(res => res.data)
+    return{type: EDIT_USER, payload: data}
+    
+}
+
+export const editUserProfilePic = (user_id, profile_pic) => {
+    let data = axios.put(`/api/editprofile_pic/${user_id}`, {profile_pic})
+    .then(res => res.data)
+    return{type: EDIT_USER_PROFILEPIC, payload: data}
+}
 
 
 export default function (state = initialState, action) {
@@ -94,6 +108,14 @@ export default function (state = initialState, action) {
             return { ...state, user: payload, username: payload.username, profilePic: payload.profilePic, error: false }
         case GET_USER + '_REJECTED':
             return { ...state, redirect: true, error: payload }
+        case EDIT_USER + '_FULFILLED':
+            return {...state, user: payload}
+        case EDIT_USER + '_REJECTED':
+            return {...state, error: payload}
+        case EDIT_USER_PROFILEPIC + '_FULFILLED':
+            return {...state, user: payload}
+        case EDIT_USER_PROFILEPIC + '_REJECTED':
+            return {...state, error: payload}
         default:
             return state
     }

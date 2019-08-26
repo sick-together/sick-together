@@ -39,6 +39,8 @@ app.post('/api/login', ac.login)
 app.post('/api/signup', ac.signup)
 app.get('/api/user', authCheck, ac.getUser)
 app.delete('/api/logout', ac.logout)
+app.put('/api/edit/:user_id', ac.editUser)
+app.put('/api/editprofile_pic/:user_id', ac.editUserProfilePic)
 
 app.post('/api/creategroup', authCheck, gc.createGroup)
 app.post('/api/creategeneral/:groupId', gc.createGeneral)

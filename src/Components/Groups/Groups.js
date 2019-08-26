@@ -1,6 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 import clsx from "clsx";
-import { getSelectedGroup, deleteGroup, searchGroups, getGroups, joinGroup, leaveGroup } from "../../Redux/groupReducer.js";
+import {
+  getSelectedGroup,
+  deleteGroup,
+  editGroup,
+  searchGroups,
+  getGroups,
+  setEditId,
+  joinGroup, 
+  leaveGroup
+} from "../../Redux/groupReducer.js";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -14,10 +23,11 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import SearchIcon from '@material-ui/icons/Search';
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import TextField from '@material-ui/core/TextField';
+import TextField from "@material-ui/core/TextField";
 import GroupIcon from "@material-ui/icons/Group";
 import AddBoxIcon from "@material-ui/icons/AddBox";
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from "@material-ui/icons/Delete";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
   // feedMaster: {
@@ -25,29 +35,29 @@ const useStyles = makeStyles({
   // },
   card: {
     maxWidth: 725,
-    width: '85vw',
-    minWidth: '50vw',
+    width: "85vw",
+    minWidth: "50vw",
     marginTop: 10
   },
   groupButtons: {
-    display: 'flex',
-    justifyContent: 'space-between'
+    display: "flex",
+    justifyContent: "space-between"
   },
   textField: {
-    width: '99vw',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    position: 'sticky',
+    width: "99vw",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    position: "sticky",
     top: 64,
-    ['@media (max-width:750px)']: {
+    ["@media (max-width:750px)"]: {
       top: 56
     },
     zIndex: 1
   },
   chatBox: {
-    width: '40vw',
-    marginLeft: '5px',
+    width: "40vw",
+    marginLeft: "5px",
     paddingBottom: 5
   }
 });
@@ -69,25 +79,32 @@ function Groups(props) {
 
 
   function setSearch(e) {
-    let newSearch = e
-    console.log(newSearch)
-    setSearchInput(newSearch)
-    if (e === '') {
-      props.getGroups()
+    let newSearch = e;
+    console.log(newSearch);
+    setSearchInput(newSearch);
+    if (e === "") {
+      props.getGroups();
     }
   }
   function enterSearch(e) {
     if (e.keyCode === 13) {
-      if (searchInput !== '') {
-        props.searchGroups(myAreaChecked, searchInput)
+      if (searchInput !== "") {
+        props.searchGroups(myAreaChecked, searchInput);
       }
     }
   }
 
   return (
-    <section style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+    <section
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        width: "100%"
+      }}
+    >
       <Paper className={classes.textField}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <SearchIcon />
           <TextField
             id="outlined-dense"
@@ -99,7 +116,7 @@ function Groups(props) {
             onKeyDown={enterSearch}
           />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <Typography>My Area</Typography>
           <Checkbox
             checked={myAreaChecked}
@@ -107,15 +124,13 @@ function Groups(props) {
             value="checkBox"
             color="primary"
             inputProps={{
-              'aria-label': 'secondary checkbox',
+              "aria-label": "secondary checkbox"
             }}
           />
         </div>
-
       </Paper>
-      {
-        groups && myAreaChecked ?
-          (groups.map(group => {
+      {groups && myAreaChecked
+        ? (groups.map(group => {
             if (group.location === `${user.city}, ${user.state}`) {
               return (
                 <div className={classes.feedMaster} key={group.group_id}>
@@ -134,13 +149,32 @@ function Groups(props) {
                           title={group.group_name}
                         />
                         <CardContent>
-                          <section style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Typography gutterBottom variant="h5" component="h2" >
+                          <section
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center"
+                            }}
+                          >
+                            <Typography
+                              gutterBottom
+                              variant="h5"
+                              component="h2"
+                            >
                               {group.group_name}
                             </Typography>
-                            <Typography variant='p' style={{ color: '#555962' }}>{group.location}</Typography>
+                            <Typography
+                              variant="p"
+                              style={{ color: "#555962" }}
+                            >
+                              {group.location}
+                            </Typography>
                           </section>
-                          <Typography variant="body2" color="textSecondary" component="p">
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            component="p"
+                          >
                             {group.description}
                           </Typography>
                         </CardContent>
@@ -157,17 +191,36 @@ function Groups(props) {
                         <AddBoxIcon className={classes.addicon} onClick={() => props.joinGroup(group.group_id)} />
                       </Button>)}
                       {group.user_id === props.user.user.id ? (
-                        <Button size="small" style={{ color: '#DC143C' }} onClick={() => props.deleteGroup(group.group_id)}>
-                          <DeleteIcon />
+                        <div>
+                           <a
+                    href={"#/editgroup/" + group.group_id}
+                    key={group.group_id}
+                    onClick={() => props.setEditId(group.group_id)}
+                  >
+                        <Button 
+                          size="small"
+                          style={{ color: "green" }}
+                        >
+                          Edit Group
                         </Button>
+                        </a>
+                          <Button
+                            size="small"
+                            style={{ color: "#DC143C" }}
+                            onClick={() => props.deleteGroup(group.group_id)}
+                          >
+                            <DeleteIcon />
+                          </Button>
+                        </div>
                       ) : null}
-
                     </CardActions>
                   </Card>
                 </div>
-              )
+              );
             }
-          })) : groups ? (groups.map(group => {
+          })
+        ) : groups
+        ? (groups.map(group => {
             return (
               <div className={classes.feedMaster} key={group.group_id}>
                 <Card className={classes.card}>
@@ -185,13 +238,25 @@ function Groups(props) {
                         title={group.group_name}
                       />
                       <CardContent>
-                        <section style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Typography gutterBottom variant="h5" component="h2" >
+                        <section
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                          }}
+                        >
+                          <Typography gutterBottom variant="h5" component="h2">
                             {group.group_name}
                           </Typography>
-                          <Typography variant='p' style={{ color: '#555962' }}>{group.location}</Typography>
+                          <Typography variant="p" style={{ color: "#555962" }}>
+                            {group.location}
+                          </Typography>
                         </section>
-                        <Typography variant="body2" color="textSecondary" component="p">
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          component="p"
+                        >
                           {group.description}
                         </Typography>
                       </CardContent>
@@ -208,11 +273,28 @@ function Groups(props) {
                       <AddBoxIcon className={classes.addicon} onClick={() => props.joinGroup(group.group_id)} />
                     </Button>)}
                     {group.user_id === props.user.user.id ? (
-                      <Button size="small" style={{ color: '#DC143C' }} onClick={() => props.deleteGroup(group.group_id)}>
-                        <DeleteIcon />
-                      </Button>
+                      <div>
+                        <a
+                    href={"#/editgroup/" + group.group_id}
+                    key={group.group_id}
+                    onClick={() => props.setEditId(group.group_id)}
+                  >
+                        <Button 
+                          size="small"
+                          style={{ color: "green" }}
+                        >
+                          Edit Group
+                        </Button>
+                        </a>
+                        <Button
+                          size="small"
+                          style={{ color: "#DC143C" }}
+                          onClick={() => props.deleteGroup(group.group_id)}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      </div>
                     ) : null}
-
                   </CardActions>
                 </Card>
               </div>
@@ -230,5 +312,5 @@ function mapStateToProps(state) {
 }
 export default connect(
   mapStateToProps,
-  { getSelectedGroup, deleteGroup, searchGroups, getGroups, joinGroup, leaveGroup }
+  { getSelectedGroup, deleteGroup, searchGroups, getGroups, joinGroup, leaveGroup, editGroup, setEditId }
 )(Groups);

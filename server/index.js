@@ -56,7 +56,7 @@ app.delete('/api/deletegroup/:group_id', authCheck, gc.deleteGroup)
 app.post('/api/joingroup/:group_id', authCheck, gc.joinGroup)
 app.delete('/api/leavegroup/:group_id', gc.leaveGroup)
 app.get('/api/getjoinedgroups', authCheck, gc.getJoinedGroups)
-
+app.put('/api/editgroup/:group_id', authCheck, gc.editGroup)
 
 io.on("connection", socket => {
     console.log("User Connected");

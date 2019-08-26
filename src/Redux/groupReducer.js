@@ -13,6 +13,8 @@ import {
   GET_JOINED_GROUPS,
   CLEAR_SELECTED,
   SEARCH_GROUPS,
+  EDIT_GROUP,
+  SET_EDIT_ID,
   LEAVE_GROUP,
   DELETE_ROOM
 } from "./actionTypes";
@@ -22,8 +24,8 @@ const initialState = {
   selectedGroup: {},
   groupMessages: {},
   rooms: [],
-  lastGroupId: null,
-  joinedGroups: [],
+  editId: null,
+  joinedGroups: []
 };
 
 export const getGroups = () => {
@@ -151,8 +153,17 @@ export function getJoinedGroups() {
   return { type: GET_JOINED_GROUPS, payload: data };
 }
 
+export function editGroup(newGroupName, newGroupPicture, newDescription, newLocation, group_id) {  
+  let data = axios.put(`/api/editgroup/${group_id}`, {newGroupName, newGroupPicture, newDescription, newLocation})
+    .then(res => res.data);
+    return { type: EDIT_GROUP, payload: data };
+  }
 
-export default function (state = initialState, action) {
+export function setEditId(groupId) {
+  return { type: SET_EDIT_ID, payload: +groupId}
+}
+
+export default function(state = initialState, action) {
   let { type, payload } = action;
   switch (type) {
     case GET_GROUPS + "_FULFILLED":
@@ -219,6 +230,10 @@ export default function (state = initialState, action) {
       return { ...state, joinedGroups: payload }
     case GET_JOINED_GROUPS + "_FULFILLED":
       return { ...state, joinedGroups: payload };
+    case EDIT_GROUP + '_FULFILLED':
+      return { ...state, groups: payload}
+    case SET_EDIT_ID:
+      return { ...state, editId: payload}
     default:
       return state;
   }

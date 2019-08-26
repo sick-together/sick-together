@@ -57,7 +57,6 @@ module.exports = {
       let results = await db.search_local([sqlSearch, req.session.user.city, req.session.user.state])
       res.send(results)
     }
-
   },
   async getSelected(req, res) {
     let { groupId } = req.params;
@@ -91,5 +90,18 @@ module.exports = {
     const db = req.app.get('db')
     let rooms = await db.create_room([newRoom, groupId])
     res.send(rooms)
+  },
+  async editGroup(req, res) {
+    let { group_id } = req.params;
+    let { newGroupName, newGroupPicture, newDescription, newLocation } = req.body;
+    const db = req.app.get('db');
+    let groups = await db.edit_group([
+      newGroupName,
+      newGroupPicture,
+      newDescription,
+      newLocation,
+      +group_id
+    ]);
+    res.send(groups);
   }
 };

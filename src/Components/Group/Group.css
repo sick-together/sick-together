@@ -39,8 +39,8 @@
 .chat-image {
   margin-top: 2px;
   margin-left: 37px;
-  height: 137px;
-  width: 313px;
+  height: 170px;
+  width: 400px;
   border-radius: 0px 0px 4px 4px;
   border: 2px solid rgba(189, 195, 199, 0.5);
   transition: 1.3s;
@@ -50,16 +50,57 @@
   transform: scale(1.07);
 }
 
+iframe {
+  margin-left: 37px;
+  border-radius: 0px 0px 4px 4px;
+  border: 2px solid rgba(189, 195, 199, 0.5);
+}
+/* .yt-link {
+  margin-left: 37px;
+  border-radius: 0px 0px 4px 4px;
+  border: 2px solid rgba(189, 195, 199, 0.5);
+  min-width: 345px;
+} */
 @media (max-width: 750px) {
   .chat-image {
     margin-left: 10px;
-    height: 90px;
-    width: 175px;
+    height: 120px;
+    width: 250px;
     border-radius: 0px 0px 4px 4px;
     border: 1px solid rgba(189, 195, 199, 0.5);
     /* border-bottom: 0.5px solid rgba(189, 195, 199, 0.5); */
   }
+
+  iframe {
+    margin-left: 10px;
+    height: 150px;
+    width: 250px;
+    border-radius: 0px 0px 4px 4px;
+    border: 1px solid rgba(189, 195, 199, 0.5);
+
+  }
 }
+
+@media (max-width: 414px) {
+  .chat-image {
+    margin-left: 10px;
+    height: 120px;
+    width: 200px;
+    border-radius: 0px 0px 4px 4px;
+    border: 1px solid rgba(189, 195, 199, 0.5);
+    /* border-bottom: 0.5px solid rgba(189, 195, 199, 0.5); */
+  }
+
+  iframe {
+    margin-left: 10px;
+    height: 150px;
+    width: 200px;
+    border-radius: 0px 0px 4px 4px;
+    border: 1px solid rgba(189, 195, 199, 0.5);
+
+  }
+}
+
 
 /*Tenor Keyboard */
 .react-tenor-active {

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./Dashboard.css";
 import { logout } from "../../Redux/userReducer.js";
-import { getGroups } from "../../Redux/groupReducer.js";
+import { getGroups} from "../../Redux/groupReducer.js";
 import { connect } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
 import Groups from "../Groups/Groups";

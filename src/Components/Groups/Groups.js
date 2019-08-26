@@ -1,10 +1,6 @@
-import React from "react";
-<<<<<<< HEAD
-import { getSelectedGroup, joinGroup, deleteGroup } from "../../Redux/groupReducer.js";
-=======
+import React, { useEffect } from "react";
 import clsx from "clsx";
-import { getSelectedGroup, deleteGroup, searchGroups, getGroups } from "../../Redux/groupReducer.js";
->>>>>>> master
+import { getSelectedGroup, deleteGroup, searchGroups, getGroups, joinGroup, leaveGroup } from "../../Redux/groupReducer.js";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -14,6 +10,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Checkbox from '@material-ui/core/Checkbox';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import SearchIcon from '@material-ui/icons/Search';
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -23,17 +20,6 @@ import AddBoxIcon from "@material-ui/icons/AddBox";
 import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles({
-<<<<<<< HEAD
-    // feedMaster: {
-    //   width: '100%'
-    // },
-    card: {
-        maxWidth: 725,
-        width: '85vw',
-        minWidth: '50vw',
-        marginTop: 10,
-        marginBottom: 10
-=======
   // feedMaster: {
   //   width: '100%'
   // },
@@ -56,7 +42,6 @@ const useStyles = makeStyles({
     top: 64,
     ['@media (max-width:750px)']: {
       top: 56
->>>>>>> master
     },
     zIndex: 1
   },
@@ -69,80 +54,19 @@ const useStyles = makeStyles({
 
 function Groups(props) {
   const classes = useStyles();
-  let { groups } = props.groups;
-<<<<<<< HEAD
-  console.log('props :', props);
+  let { groups, joinedGroups, } = props.groups;
   let arrayOfJoinedIds = []
-  if(groups.joinedGroups) {
-    console.log('hit if statement')
-    groups.joinedGroups.forEach(item => arrayOfJoinedIds.push(item.group_id))
+  if (joinedGroups && joinedGroups.length) {
+    joinedGroups.forEach(item => arrayOfJoinedIds.push(item.group_id))
   }
-  console.log(arrayOfJoinedIds)
-  
-  return (
-  groups.map(group => {
-    return (
-      <div className={classes.feedMaster}>
-        <Card className={classes.card}>
-          <a
-            href={"#/group/" + group.group_id}
-            key={group.group_id}
-            onClick={() => props.getSelectedGroup(group.group_id)}
-          >
-            <CardActionArea>
-              <CardMedia
-                component="img"
-                alt="Add group to join the chat!"
-                height="140"
-                image={group.group_picture}
-                title="Contemplative Reptile"
-              />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
-                  {group.group_name}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {group.description}
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </a>
-          <CardActions className={classes.groupButtons}>
-            <Button size="small" color="primary">
-              <GroupIcon className={classes.groupicon} />
-            </Button>
-            <div>
-              {/* {props.joinedGroups.includes()} */}
-              <Button 
-            onClick={() => props.joinGroup(group.group_id)}
-            size="small" color="primary">
-              <AddBoxIcon className={classes.addicon} />
-            </Button>
-            </div>
-            <div>
-              {group.user_id === props.user.user.id ? (
-                <button onClick={() => props.deleteGroup(group.group_id)}>
-                  Delete
-                </button>
-              ) : null}
-            </div>
-            <div>
-              {group.user_id === props.user.user.id ? (
-                <button onClick={() => props.editGroup(group.group_id)}>
-                  Edit Group
-                </button>
-              ) : null}
-            </div>
-          </CardActions>
-        </Card>
-      </div>
-    );
-  }));
-=======
+  useEffect(() => {
+    props.getGroups()
+  }, [arrayOfJoinedIds.length])
+  console.log('Array of Joined:', arrayOfJoinedIds)
   let { user } = props.user
-  console.log(groups);
   const [searchInput, setSearchInput] = React.useState('')
   const [myAreaChecked, changeAreaChecker] = React.useState(false);
+
 
   function setSearch(e) {
     let newSearch = e
@@ -165,14 +89,6 @@ function Groups(props) {
       <Paper className={classes.textField}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <SearchIcon />
-          {/* <TextField
-            id="standard-name"
-            label="Search for groups"
-            className={classes.chatBox}
-            value={searchInput}
-            onChange={e => setSearch(e.target.value)}
-            onKeyDown={enterSearch}
-          /> */}
           <TextField
             id="outlined-dense"
             label="Search for groups"
@@ -231,13 +147,15 @@ function Groups(props) {
                       </CardActionArea>
                     </a>
                     <CardActions className={classes.groupButtons}>
-                      <Button size="small" color="primary">
+                      <Button size="small" color="primary" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <GroupIcon className={classes.groupicon} />
+                        <p style={{ marginLeft: '5px' }}>{group.members}</p>
                       </Button>
-                      <Button size="small" color="primary">
-                        <AddBoxIcon className={classes.addicon} />
-                      </Button>
-
+                      {arrayOfJoinedIds.includes(+group.group_id) ? (<Button size="small" color="primary">
+                        <CheckBoxIcon className={classes.addicon} onClick={() => props.leaveGroup(group.group_id)} />
+                      </Button>) : (<Button size="small" color="primary">
+                        <AddBoxIcon className={classes.addicon} onClick={() => props.joinGroup(group.group_id)} />
+                      </Button>)}
                       {group.user_id === props.user.user.id ? (
                         <Button size="small" style={{ color: '#DC143C' }} onClick={() => props.deleteGroup(group.group_id)}>
                           <DeleteIcon />
@@ -280,13 +198,15 @@ function Groups(props) {
                     </CardActionArea>
                   </a>
                   <CardActions className={classes.groupButtons}>
-                    <Button size="small" color="primary">
+                    <Button size="small" color="primary" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       <GroupIcon className={classes.groupicon} />
+                      <p style={{ marginLeft: '3px' }}>{group.members}</p>
                     </Button>
-                    <Button size="small" color="primary">
-                      <AddBoxIcon className={classes.addicon} />
-                    </Button>
-
+                    {arrayOfJoinedIds.includes(+group.group_id) ? (<Button size="small" color="primary">
+                      <CheckBoxIcon className={classes.addicon} onClick={() => props.leaveGroup(group.group_id)} />
+                    </Button>) : (<Button size="small" color="primary">
+                      <AddBoxIcon className={classes.addicon} onClick={() => props.joinGroup(group.group_id)} />
+                    </Button>)}
                     {group.user_id === props.user.user.id ? (
                       <Button size="small" style={{ color: '#DC143C' }} onClick={() => props.deleteGroup(group.group_id)}>
                         <DeleteIcon />
@@ -300,7 +220,6 @@ function Groups(props) {
           })) : null
       }
     </section >);
->>>>>>> master
 }
 
 function mapStateToProps(state) {
@@ -311,9 +230,5 @@ function mapStateToProps(state) {
 }
 export default connect(
   mapStateToProps,
-<<<<<<< HEAD
-  { getSelectedGroup, joinGroup, deleteGroup }
-=======
-  { getSelectedGroup, deleteGroup, searchGroups, getGroups }
->>>>>>> master
+  { getSelectedGroup, deleteGroup, searchGroups, getGroups, joinGroup, leaveGroup }
 )(Groups);

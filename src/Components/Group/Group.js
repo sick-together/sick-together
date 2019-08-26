@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import Tenor from 'react-tenor'
 import io from 'socket.io-client';
-import { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData } from '../../Redux/groupReducer.js'
+import { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData, deleteRoom } from '../../Redux/groupReducer.js'
 import { connect } from 'react-redux';
 import moment from 'moment'
 import './Group.css'
@@ -59,10 +59,10 @@ const useStyles = makeStyles(theme => ({
     },
     topicsWindow: {
         width: '20%',
-        ['@media (max-width:750px)']: {
+        ['@media (max-width:768px)']: {
             width: '33%',
             display: 'none'
-          },
+        },
         height: '82vh',
         borderRight: '1px solid rgba(0, 0, 0, 0.3)'
     },
@@ -84,7 +84,7 @@ const useStyles = makeStyles(theme => ({
         ['@media (max-width:750px)']: {
             width: '59%',
             marginLeft: '5px'
-          },
+        },
         paddingBottom: 5
     },
     button: {
@@ -101,7 +101,7 @@ const useStyles = makeStyles(theme => ({
         ['@media (max-width:750px)']: {
             minHeight: '44px',
             maxHeight: '44px'
-          },
+        },
     },
     message: {
         display: 'flex',
@@ -110,7 +110,7 @@ const useStyles = makeStyles(theme => ({
         padding: '5px 10px',
         // borderTop: '1px solid grey',
         borderRadius: '5px',
-        
+
     },
     messageContent: {
         marginLeft: '5px'
@@ -184,6 +184,13 @@ function Group(props) {
     }, [selectedGroup[0]])
 
     useEffect(() => {
+        if (selectedGroup && selectedGroup[0]) {
+            let { group_id } = selectedGroup[0]
+            props.getRooms(+group_id)
+        }
+    }, [rooms.length])
+
+    useEffect(() => {
 
         socket.on('room joined', data => {
             joinSuccess(data)
@@ -249,7 +256,7 @@ function Group(props) {
                         userId: user.id,
                         timeStamp
                     })
-                    
+
                     changeTextValue('')
                 }
             })
@@ -296,7 +303,7 @@ function Group(props) {
         }
     }
 
-    function menuRoomChange(roomName){
+    function menuRoomChange(roomName) {
         changeCurrentRoom(roomName)
         handleClose()
     }
@@ -356,8 +363,8 @@ function Group(props) {
                                 >
                                     <MenuItem onClick={handleClose}>Leave Group</MenuItem>
                                     <MenuItem onClick={handleClose}>Edit Group</MenuItem>
-                                    <Divider style={{width: '100%'}} />
-                                   { rooms.map(topic => {
+                                    <Divider style={{ width: '100%' }} />
+                                    {rooms.map(topic => {
                                         return (
                                             <ListItem button key={topic.room_id} onClick={() => menuRoomChange(topic.room_name)}>
                                                 <ListItemText>#{topic.room_name}</ListItemText>
@@ -378,9 +385,12 @@ function Group(props) {
                                 {
                                     rooms.map(topic => {
                                         return (
-                                            <ListItem button key={topic.room_id} onClick={() => changeCurrentRoom(topic.room_name)}>
-                                                <ListItemText>#{topic.room_name}</ListItemText>
-                                            </ListItem>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <ListItem button key={topic.room_id} onClick={() => changeCurrentRoom(topic.room_name)}>
+                                                    <ListItemText>#{topic.room_name}</ListItemText>
+                                                </ListItem>
+                                                {user.id === user_id && topic.room_name !== 'general' ? (<IconButton aria-label='delete' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => props.deleteRoom(topic.room_id, topic.group_id)}><DeleteIcon /></IconButton>) : null}
+                                            </div>
                                         )
 
                                     })
@@ -389,7 +399,6 @@ function Group(props) {
                                     <ListItem style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         < Fab color="primary" aria-label="add" size='small' className={classes.fab} onClick={() => flipEdit(!editing)}>
                                             {!editing ? (<AddIcon />) : (<ArrowBackIcon />)}
-
                                         </Fab>
                                         {!editing
                                             ? <ListItemText>
@@ -406,11 +415,10 @@ function Group(props) {
                                                 onKeyDown={addNewRoom}
                                             />
                                         }
-
                                     </ListItem>) : null}
                             </List>
                         </Paper>
-                        <div  style={{ width: '100%', position: 'relative', height: '82vh' }}>
+                        <div style={{ width: '100%', position: 'relative', height: '82vh' }}>
                             <section className={classes.chatWindow}>
                                 {messages && messages.length ?
 
@@ -418,7 +426,7 @@ function Group(props) {
                                         if (message.room_name === currentRoom && message) {
                                             return (
                                                 <div className={classes.message} key={message.message_id} >
-                                                    <Paper style={{ display: 'flex', justifyContent: 'space-between', borderRadius: 0 }}>
+                                                    <Paper style={{ display: 'flex', justifyContent: 'space-between', borderRadius: 0, background: '#f8f8f8' }}>
                                                         <section style={{ display: 'flex' }}>
                                                             <Avatar alt={message.username} src={message.profile_pic} className={classes.avatar} />
                                                             <Typography variant='p' style={{ display: 'flex', alignItems: 'center' }}>{message.username}</Typography>
@@ -442,7 +450,7 @@ function Group(props) {
                                                                     margin="normal"
                                                                     onChange={e => changeNewMessage(e.target.value)}
                                                                     onKeyDown={enterMessageChanges} />)
-                                                                    : editMessage && message.message.startsWith('http') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) :(<Typography variant='p' className={classes.messageContent}>
+                                                                    : editMessage && message.message.startsWith('http') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : (<Typography variant='p' className={classes.messageContent}>
                                                                         {message.message}
                                                                     </Typography>)}
                                                         </div>
@@ -461,27 +469,27 @@ function Group(props) {
                                 }
                             </section>
                             <Paper className={classes.textField} style={{ borderTop: '0.5px solid rgba(189, 195, 199, 0.5)', borderRadius: 0, borderBottomRightRadius: 4, borderBottomLeftRadius: 4 }}>
-                                { !gifSearchToggled ? 
-                                (
-                                <TextField 
-                                id="standard-name"
-                                label="Send a message!"
-                                className={(classes.chatBox)}
-                                margin="dense"
-                                variant="outlined"
-                                value={textValue}
-                                autoComplete='off'
-                                 onChange={e => changeTextValue(e.target.value)}
-                                onKeyDown={enterMessage}
-                                style={{maxHeight: '44px', padding: 0}}
-                              />) : (<Tenor token="BH9EX9JC7WAE" onSelect={result => handleGifSelect(result.media[0].gif.url)} />)}
+                                {!gifSearchToggled ?
+                                    (
+                                        <TextField
+                                            id="standard-name"
+                                            label="Send a message!"
+                                            className={(classes.chatBox)}
+                                            margin="dense"
+                                            variant="outlined"
+                                            value={textValue}
+                                            autoComplete='off'
+                                            onChange={e => changeTextValue(e.target.value)}
+                                            onKeyDown={enterMessage}
+                                            style={{ maxHeight: '44px', padding: 0 }}
+                                        />) : (<Tenor token="BH9EX9JC7WAE" onSelect={result => handleGifSelect(result.media[0].gif.url)} />)}
                                 <div style={{ position: 'absolute', right: 0, display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', maxHeight: '44px' }}>
-                                <Button variant="contained" color="primary" className={classes.button}
+                                    <Button variant="contained" color="primary" className={classes.button}
                                         onClick={sendMessage}
                                     >
                                         Send
-                                     <i style={{marginLeft: '3px' }}className="fas fa-comment-medical" />
-                                    </Button> <IconButton style={{marginRight: '3px', display: 'flex', flexDirection: 'column', alignItems: 'center'}} onClick={() => toggleGifSearch(!gifSearchToggled)} title='Search GIFs' id='gifIcon'>+<GifIcon /></IconButton> 
+                                     <i style={{ marginLeft: '3px' }} className="fas fa-comment-medical" />
+                                    </Button> <IconButton style={{ marginRight: '3px', display: 'flex', flexDirection: 'column', alignItems: 'center' }} onClick={() => toggleGifSearch(!gifSearchToggled)} title='Search GIFs' id='gifIcon'>+<GifIcon /></IconButton>
                                 </div>
                             </Paper>
                         </div>
@@ -501,5 +509,5 @@ function mapStateToProps(state) {
 }
 export default connect(
     mapStateToProps,
-    { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData }
+    { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData, deleteRoom }
 )(Group);

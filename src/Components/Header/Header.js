@@ -3,6 +3,7 @@ import clsx from "clsx";
 import io from 'socket.io-client'
 import { connect } from "react-redux";
 import { logout, getUser } from "../../Redux/userReducer.js";
+import { getJoinedGroups, getSelectedGroup } from '../../Redux/groupReducer.js'
 import { Link } from "react-router-dom";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -21,11 +22,11 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
+import Avatar from '@material-ui/core/Avatar';
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
-import { getJoinedGroups } from "../../Redux/groupReducer.js";
 
 
 const socket = io()
@@ -85,6 +86,23 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen
     }),
     marginLeft: 0
+  },
+  bigAvatar: {
+    margin: 10,
+    width: 60,
+    height: 60,
+  },
+  '@global': {
+    '*::-webkit-scrollbar': {
+      width: '0.4em'
+    },
+    '*::-webkit-scrollbar-track': {
+      '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+    },
+    '*::-webkit-scrollbar-thumb': {
+      backgroundColor: 'rgba(0,0,0,.1)',
+      outline: '1px solid slategrey'
+    }
   }
 }));
 
@@ -92,18 +110,25 @@ function Header(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const { user } = props;
+  const [joinedList, changeJoinedList] = React.useState(['Create New Group'])
+
 
   useEffect(() => {
     props.getJoinedGroups();
-    console.log(user.joinedGroups);
-  });
+    if (props.joinedGroups.length) {
+      changeJoinedList([...props.joinedGroups, 'Create New Group'])
+    }
+  }, [props.joinedGroups.length]);
 
 
   useEffect(() => {
     props.getUser()
   }, [])
 
+  function getSelected(groupId) {
+    props.getSelectedGroup(groupId)
+    handleDrawerClose()
+  }
 
   function handleDrawerOpen() {
     setOpen(true);
@@ -155,7 +180,7 @@ function Header(props) {
               )}
           </IconButton>
         </div>
-        <Divider />
+        <Divider style={{ width: '100%' }} />
         <List>
           {["My Account", "Inbox", "Logout"].map(
             (text, index) => (
@@ -178,36 +203,40 @@ function Header(props) {
             )
           )}
         </List>
-        <Divider />
+        <Divider style={{ width: '100%' }} />
         <List>
-          {["Joined Groups", "Create New Group"].map((text, index) => (
-            <div key={text}>
-              {text === "Create New Group" ? (
-                <Link to="/creategroup">
-                  <ListItem button onClick={handleDrawerClose}>
-                    <ListItemIcon>
-                      <Fab
-                        size="small"
-                        color="secondary"
-                        aria-label="add"
-                        className={classes.margin}
-                      >
-                        <AddIcon />
-                      </Fab>
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItem>
-                </Link>
-              ) : (
-                  <ListItem button key={text}>
-                    <ListItemIcon>
-                      <MailIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItem>
-                )}
-            </div>
-          ))}
+          {
+            joinedList.map((text, index) => (
+              <div key={index}>
+                {text === "Create New Group" ? (
+                  <Link to="/creategroup">
+                    <ListItem button onClick={handleDrawerClose}>
+                      <ListItemIcon>
+                        <Fab
+                          size="small"
+                          color="primary"
+                          aria-label="add"
+                          className={classes.margin}
+                        >
+                          <AddIcon />
+                        </Fab>
+                      </ListItemIcon>
+                      <ListItemText primary={text} />
+                    </ListItem>
+                  </Link>
+                ) : (
+                    <a
+                      href={"#/group/" + text.group_id}
+                      key={index}
+                      onClick={() => getSelected(text.group_id)}
+                    >
+                      <ListItem button style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Avatar alt="Group Avatar" title={text.group_name} src={text.group_picture} className={classes.bigAvatar} />
+                      </ListItem>
+                    </a>
+                  )}
+              </div>
+            ))}
         </List>
       </Drawer>
       <main
@@ -221,10 +250,10 @@ function Header(props) {
   );
 }
 function mapStateToProps(state) {
-  return state.user;
+  return { ...state.user, ...state.groups }
 }
 
 export default connect(
   mapStateToProps,
-  { logout, getUser, getJoinedGroups }
+  { logout, getUser, getJoinedGroups, getSelectedGroup }
 )(Header);

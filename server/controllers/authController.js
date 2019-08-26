@@ -19,7 +19,7 @@ module.exports = {
                 loggedIn: true,
                 joinedGroups: usersGroups
             };
-            console.log('req.session.user', req.session.user)
+            console.log(req.session.user.username, 'logged in!')
             res.send(req.session.user);
         } else res.status(401).send('Username or password incorrect');
     },
@@ -40,7 +40,7 @@ module.exports = {
             loggedIn: true,
             joinedGroups: []
         }
-        console.log('req.session.user', req.session.user)
+        console.log('User registered:', req.session.user.username)
         res.send(req.session.user);
     },
     logout(req, res) {

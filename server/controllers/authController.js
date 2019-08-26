@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-
 module.exports = {
     async login(req, res) {
         let { username, password } = req.body;
@@ -9,6 +8,7 @@ module.exports = {
         let [existingUser] = await db.get_user_by_handle(username);
         if (!existingUser) return res.status(401).send('Username not found');
         let result = await bcrypt.compare(password, existingUser.password);
+        let usersGroups = await db.get_joined_groups(existingUser.user_id)
         if (result) {
             req.session.user = {
                 username: existingUser.username,
@@ -17,7 +17,9 @@ module.exports = {
                 city: existingUser.city,
                 state: existingUser.state,
                 loggedIn: true,
+                joinedGroups: usersGroups
             };
+            console.log(req.session.user.username, 'logged in!')
             res.send(req.session.user);
         } else res.status(401).send('Username or password incorrect');
     },
@@ -35,9 +37,10 @@ module.exports = {
             profilePic: user.profile_pic,
             city: user.city,
             state: user.state,
-            loggedIn: true
+            loggedIn: true,
+            joinedGroups: []
         }
-        console.log('req.session.user', req.session.user)
+        console.log('User registered:', req.session.user.username)
         res.send(req.session.user);
     },
     logout(req, res) {

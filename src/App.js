@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import 'react-tenor/dist/styles.css'
 import Header from './Components/Header/Header'
 import LeftNav from './Components/LeftNav/LeftNav'
 import { connect } from 'react-redux'
@@ -16,7 +17,6 @@ class App extends Component {
   }
   componentDidMount = () => {
     this.props.getUser()
-    console.log('Got User!')
   }
 
   leftNavClickHandler = () => {
@@ -26,6 +26,9 @@ class App extends Component {
 
   render() {
     let { user } = this.props
+    if (user) {
+      console.log(user)
+    }
     return (
       <div className="App" >
         {user && user.loggedIn ? (<header><Header leftNavClickHandler={this.leftNavClickHandler} />

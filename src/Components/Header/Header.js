@@ -18,7 +18,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
+import HomeIcon from '@material-ui/icons/Home';
 import MailIcon from '@material-ui/icons/Mail';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -118,15 +118,15 @@ function Header(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
-                        <Link to='/dashboard'>   Sick Together</Link>
+                        <Link to='/dashboard'>Sick Together</Link>
                     </Typography>
                 </Toolbar>
             </AppBar>
             <Drawer
                 className={classes.drawer}
-                variant="persistent"
                 anchor="left"
                 open={open}
+                onClose={handleDrawerClose}
                 classes={{
                     paper: classes.drawerPaper,
                 }}
@@ -138,7 +138,20 @@ function Header(props) {
                 </div>
                 <Divider />
                 <List>
-                    {['My Account', 'Inbox', 'Send email', 'Logout'].map((text, index) => (
+                    <Link to='/accountsettings'>
+                    <ListItem button>
+                        <ListItemIcon><AccountCircleIcon/></ListItemIcon>
+                        <ListItemText>My Account</ListItemText>
+                    </ListItem>
+                    </Link>
+                    <Link to='/dashboard'>
+                    <ListItem button>
+                        <ListItemIcon><HomeIcon/></ListItemIcon>
+                        <ListItemText>Home</ListItemText>
+                    </ListItem>
+                    </Link>
+                    {['Inbox', 'Send email', 'Logout'].map((text, index) => (
+                        
                         <ListItem button key={text} onClick={text === 'Logout' ? props.logout : null}>
                             <ListItemIcon>{text === 'Logout' ? <ExitToAppIcon /> : <AccountCircleIcon />}</ListItemIcon>
                             <ListItemText primary={text} />

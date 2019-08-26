@@ -52,7 +52,7 @@ function Register(props){
   const [city, setCity] = React.useState('')
   const [state, setStateUS] = React.useState('')
   const [open, setOpen] = React.useState(false)
-
+  console.log(props)
   function signupUser(){
     // let { username, password, city, state } = this.state;
     let profilePic = `https://robohash.org/${username}`;

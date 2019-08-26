@@ -1,3 +1,6 @@
+delete from messages
+where room_id = $1;
+
 delete from rooms
 where room_id = $1;
 

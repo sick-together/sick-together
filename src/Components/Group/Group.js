@@ -308,6 +308,11 @@ function Group(props) {
         handleClose()
     }
 
+    function removeRoom(roomId, groupId) {
+        props.deleteRoom(roomId, groupId)
+        changeCurrentRoom('general')
+    }
+
     function joinGroup(groupId, groupName) {
         console.log('hit join group')
         socket.emit('join room', {
@@ -389,7 +394,7 @@ function Group(props) {
                                                 <ListItem button key={topic.room_id} onClick={() => changeCurrentRoom(topic.room_name)}>
                                                     <ListItemText>#{topic.room_name}</ListItemText>
                                                 </ListItem>
-                                                {user.id === user_id && topic.room_name !== 'general' ? (<IconButton aria-label='delete' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => props.deleteRoom(topic.room_id, topic.group_id)}><DeleteIcon /></IconButton>) : null}
+                                                {user.id === user_id && topic.room_name !== 'general' ? (<IconButton aria-label='delete' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => removeRoom(topic.room_id, topic.group_id)}><DeleteIcon /></IconButton>) : null}
                                             </div>
                                         )
 

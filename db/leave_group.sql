@@ -1,8 +1,8 @@
-insert into joined_groups(user_id, group_id)
-values ($1, $2);
+DELETE FROM joined_groups
+WHERE user_id = $1 AND group_id = $2;
 
 update groups
-set members = members + 1
+set members = members - 1
 where group_id = $2;
 
 select * from joined_groups

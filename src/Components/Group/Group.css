@@ -36,26 +36,30 @@
   }
 }
 
-.chat-image{
+.chat-image {
+  margin-top: 2px;
   margin-left: 37px;
-  height: 125px;
-  width: 275px;
+  height: 137px;
+  width: 313px;
   border-radius: 0px 0px 4px 4px;
   border: 2px solid rgba(189, 195, 199, 0.5);
-  
+  transition: 1.3s;
 }
 
-@media(max-width:750px){
-  .chat-image{
+.chat-image:hover {
+  transform: scale(1.07);
+}
+
+@media (max-width: 750px) {
+  .chat-image {
     margin-left: 10px;
-    height: 100px;
+    height: 90px;
     width: 175px;
     border-radius: 0px 0px 4px 4px;
     border: 1px solid rgba(189, 195, 199, 0.5);
     /* border-bottom: 0.5px solid rgba(189, 195, 199, 0.5); */
   }
 }
-
 
 /*Tenor Keyboard */
 .react-tenor-active {
@@ -209,7 +213,6 @@
 
 .react-tenor--result span {
   animation: react-tenor-fade-in 0.2s;
-  background-size: cover;
   display: block;
   height: 100%;
   width: 100%;

@@ -27,6 +27,7 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
+import HomeIcon from '@material-ui/icons/Home'
 
 
 const socket = io()
@@ -182,7 +183,21 @@ function Header(props) {
         </div>
         <Divider style={{ width: '100%' }} />
         <List>
-          {["My Account", "Inbox", "Logout"].map(
+        <Link to='/dashboard'>
+                    <ListItem button>
+                        <ListItemIcon><HomeIcon/></ListItemIcon>
+                        <ListItemText>Home</ListItemText>
+                    </ListItem>
+                    </Link>
+        <Link to='/accountsettings'>
+                    <ListItem button>
+                        <ListItemIcon><AccountCircleIcon/></ListItemIcon>
+                        <ListItemText>My Account</ListItemText>
+                    </ListItem>
+                    </Link>
+                    
+
+          {["Inbox", "Logout"].map(
             (text, index) => (
               <ListItem
                 button
@@ -192,8 +207,6 @@ function Header(props) {
                 <ListItemIcon>
                   {text === "Logout" ? (
                     <ExitToAppIcon />
-                  ) : text === 'My Account' ? (
-                    <AccountCircleIcon />
                   ) : text === 'Inbox' ? (
                     <InboxIcon />
                   ) : null}

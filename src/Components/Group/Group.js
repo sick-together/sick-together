@@ -164,6 +164,15 @@ function Group(props) {
     function handleClose() {
         setAnchorEl(null);
     }
+
+    function youtubeParser(url) {
+        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        return (
+            (match && match[7].length == 11) ? 
+            (<iframe width="400" height="250" src={`https://www.youtube.com/embed/${match[7]}`} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen="allowFullScreen" ></iframe>) : null
+        )
+    }
     //Destructuring
     let { selectedGroup, groupMessages, rooms } = props.groups
     let { user } = props.user
@@ -444,22 +453,29 @@ function Group(props) {
                                                                 <IconButton aria-label='delete' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => deleteMessage(message.message_id)}><DeleteIcon /></IconButton>
                                                             </div>) : message.edited === true ? (<p style={{ display: 'flex', alignItems: 'center', marginRight: '5px', color: '#555962', fontSize: '12.5px' }}>(edited)</p>) : null}
                                                     </Paper>
-                                                    <Paper style={{ display: 'flex', textAlign: 'center', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, borderRadius: 0, borderBottomRightRadius: 4, borderBottomLeftRadius: 4, padding: '0px 7px' }}>
+                                                    <Paper style={{ display: 'flex', textAlign: 'center', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, borderRadius: 0, borderBottomRightRadius: 4, borderBottomLeftRadius: 4, padding: '0px 7px', position: 'relative' }}>
                                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                            {!editMessage && message.message.startsWith('http') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : !editMessage && !message.message.startsWith('http') ?
-                                                                (<Typography variant='p' className={classes.messageContent}>
-                                                                    {message.message}
-                                                                </Typography>) : editMessage && editId === message.message_id ? (<input
-                                                                    style={{ width: '30vw' }}
-                                                                    defaultValue={message.message}
-                                                                    margin="normal"
-                                                                    onChange={e => changeNewMessage(e.target.value)}
-                                                                    onKeyDown={enterMessageChanges} />)
-                                                                    : editMessage && message.message.startsWith('http') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : (<Typography variant='p' className={classes.messageContent}>
+                                                            {!editMessage && message.message.startsWith('https://media') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : !editMessage && message.message.startsWith('https://www.youtube') ? (
+                                                                <div className='yt-link'>
+                                                                    {youtubeParser(message.message)}
+                                                                </div>
+                                                            ) : !editMessage && message.message.startsWith('http') ? (
+                                                                <div ><img className='chat-image' alt='' src={message.message} /></div>
+                                                            )
+                                                            : !editMessage && !message.message.startsWith('http') ?
+                                                                    (<Typography variant='p' className={classes.messageContent}>
                                                                         {message.message}
-                                                                    </Typography>)}
+                                                                    </Typography>) : editMessage && editId === message.message_id ? (<input
+                                                                        style={{ width: '30vw' }}
+                                                                        defaultValue={message.message}
+                                                                        margin="normal"
+                                                                        onChange={e => changeNewMessage(e.target.value)}
+                                                                        onKeyDown={enterMessageChanges} />)
+                                                                        : editMessage && message.message.startsWith('http') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : (<Typography variant='p' className={classes.messageContent}>
+                                                                            {message.message}
+                                                                        </Typography>)}
                                                         </div>
-                                                        <div>
+                                                        <div style={{position: 'absolute', bottom: 0, right: 0, padding: 10}}>
                                                             <Typography variant='p' style={{ color: '#555962', fontSize: '12.5px', display: 'flex' }}>
                                                                 {moment(message.timestamp).calendar()}
                                                             </Typography>

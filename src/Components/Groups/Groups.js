@@ -131,7 +131,7 @@ function Groups(props) {
                           alt="Add group to join the chat!"
                           height="175"
                           image={group.group_picture}
-                          title="Contemplative Reptile"
+                          title={group.group_name}
                         />
                         <CardContent>
                           <section style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -182,7 +182,7 @@ function Groups(props) {
                         alt="Add group to join the chat!"
                         height="175"
                         image={group.group_picture}
-                        title="Contemplative Reptile"
+                        title={group.group_name}
                       />
                       <CardContent>
                         <section style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

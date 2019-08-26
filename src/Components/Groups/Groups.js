@@ -1,5 +1,6 @@
 import React from "react";
 import { getSelectedGroup, deleteGroup } from "../../Redux/groupReducer.js";
+import { joinGroup } from '../../Redux/joinedReducer.js'; 
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -31,7 +32,17 @@ const useStyles = makeStyles({
 function Groups(props) {
   const classes = useStyles();
   let { groups } = props.groups;
+  let { user } = props.user; 
+  let { joins } = props.joins; 
   console.log(groups);
+
+  function joinGroup() {
+    let { user_id } = props.user; 
+    let { group_id } =  props.getSelectedGroup(groups.group_id); 
+    console.log('userid for join', user_id)
+    console.log('groupid for join', group_id)
+    props.joinGroup(user_id, group_id) 
+  }
   return (
   groups.map(group => {
     return (
@@ -64,7 +75,7 @@ function Groups(props) {
             <Button size="small" color="primary">
               <GroupIcon className={classes.groupicon} />
             </Button>
-            <Button size="small" color="primary">
+            <Button size="small" color="primary" onClick={joinGroup}>
               <AddBoxIcon className={classes.addicon} />
             </Button>
             <div>
@@ -84,7 +95,8 @@ function Groups(props) {
 function mapStateToProps(state) {
   return {
     user: state.user,
-    groups: state.groups
+    groups: state.groups, 
+    joins: state.joins 
   };
 }
 export default connect(

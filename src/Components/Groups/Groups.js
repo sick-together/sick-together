@@ -6,7 +6,9 @@ import {
   editGroup,
   searchGroups,
   getGroups,
-  setEditId
+  setEditId,
+  joinGroup, 
+  leaveGroup
 } from "../../Redux/groupReducer.js";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,8 +18,9 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
-import Checkbox from "@material-ui/core/Checkbox";
-import SearchIcon from "@material-ui/icons/Search";
+import Checkbox from '@material-ui/core/Checkbox';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import SearchIcon from '@material-ui/icons/Search';
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
@@ -61,10 +64,19 @@ const useStyles = makeStyles({
 
 function Groups(props) {
   const classes = useStyles();
-  let { groups } = props.groups;
-  let { user } = props.user;
-  const [searchInput, setSearchInput] = React.useState("");
+  let { groups, joinedGroups, } = props.groups;
+  let arrayOfJoinedIds = []
+  if (joinedGroups && joinedGroups.length) {
+    joinedGroups.forEach(item => arrayOfJoinedIds.push(item.group_id))
+  }
+  useEffect(() => {
+    props.getGroups()
+  }, [arrayOfJoinedIds.length])
+  console.log('Array of Joined:', arrayOfJoinedIds)
+  let { user } = props.user
+  const [searchInput, setSearchInput] = React.useState('')
   const [myAreaChecked, changeAreaChecker] = React.useState(false);
+
 
   function setSearch(e) {
     let newSearch = e;
@@ -94,14 +106,6 @@ function Groups(props) {
       <Paper className={classes.textField}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <SearchIcon />
-          {/* <TextField
-            id="standard-name"
-            label="Search for groups"
-            className={classes.chatBox}
-            value={searchInput}
-            onChange={e => setSearch(e.target.value)}
-            onKeyDown={enterSearch}
-          /> */}
           <TextField
             id="outlined-dense"
             label="Search for groups"
@@ -142,7 +146,7 @@ function Groups(props) {
                           alt="Add group to join the chat!"
                           height="175"
                           image={group.group_picture}
-                          title="Contemplative Reptile"
+                          title={group.group_name}
                         />
                         <CardContent>
                           <section
@@ -177,12 +181,15 @@ function Groups(props) {
                       </CardActionArea>
                     </a>
                     <CardActions className={classes.groupButtons}>
-                      <Button size="small" color="primary">
+                      <Button size="small" color="primary" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <GroupIcon className={classes.groupicon} />
+                        <p style={{ marginLeft: '5px' }}>{group.members}</p>
                       </Button>
-                      <Button size="small" color="primary">
-                        <AddBoxIcon className={classes.addicon} />
-                      </Button>
+                      {arrayOfJoinedIds.includes(+group.group_id) ? (<Button size="small" color="primary">
+                        <CheckBoxIcon className={classes.addicon} onClick={() => props.leaveGroup(group.group_id)} />
+                      </Button>) : (<Button size="small" color="primary">
+                        <AddBoxIcon className={classes.addicon} onClick={() => props.joinGroup(group.group_id)} />
+                      </Button>)}
                       {group.user_id === props.user.user.id ? (
                         <div>
                            <a
@@ -228,7 +235,7 @@ function Groups(props) {
                         alt="Add group to join the chat!"
                         height="175"
                         image={group.group_picture}
-                        title="Contemplative Reptile"
+                        title={group.group_name}
                       />
                       <CardContent>
                         <section
@@ -256,12 +263,15 @@ function Groups(props) {
                     </CardActionArea>
                   </a>
                   <CardActions className={classes.groupButtons}>
-                    <Button size="small" color="primary">
+                    <Button size="small" color="primary" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       <GroupIcon className={classes.groupicon} />
+                      <p style={{ marginLeft: '3px' }}>{group.members}</p>
                     </Button>
-                    <Button size="small" color="primary">
-                      <AddBoxIcon className={classes.addicon} />
-                    </Button>
+                    {arrayOfJoinedIds.includes(+group.group_id) ? (<Button size="small" color="primary">
+                      <CheckBoxIcon className={classes.addicon} onClick={() => props.leaveGroup(group.group_id)} />
+                    </Button>) : (<Button size="small" color="primary">
+                      <AddBoxIcon className={classes.addicon} onClick={() => props.joinGroup(group.group_id)} />
+                    </Button>)}
                     {group.user_id === props.user.user.id ? (
                       <div>
                         <a
@@ -289,10 +299,9 @@ function Groups(props) {
                 </Card>
               </div>
             );
-          })
-         ) : null}
-    </section>
-  );
+          })) : null
+      }
+    </section >);
 }
 
 function mapStateToProps(state) {
@@ -303,5 +312,5 @@ function mapStateToProps(state) {
 }
 export default connect(
   mapStateToProps,
-  { getSelectedGroup, deleteGroup, editGroup, searchGroups, getGroups, setEditId }
+  { getSelectedGroup, deleteGroup, searchGroups, getGroups, joinGroup, leaveGroup, editGroup, setEditId }
 )(Groups);

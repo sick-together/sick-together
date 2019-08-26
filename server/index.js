@@ -39,10 +39,13 @@ app.post('/api/login', ac.login)
 app.post('/api/signup', ac.signup)
 app.get('/api/user', authCheck, ac.getUser)
 app.delete('/api/logout', ac.logout)
+app.put('/api/edit/:user_id', ac.editUser)
+app.put('/api/editprofile_pic/:user_id', ac.editUserProfilePic)
 
 app.post('/api/creategroup', authCheck, gc.createGroup)
 app.post('/api/creategeneral/:groupId', gc.createGeneral)
 app.post('/api/createroom/:groupId', gc.createRoom)
+app.delete('/api/deleteroom/:room_id', gc.deleteRoom)
 app.get('/api/getgroups', gc.getGroups)
 app.get('/api/searchgroups', gc.searchGroups)
 app.get('/api/selected/:groupId', gc.getSelected)
@@ -51,6 +54,7 @@ app.get('/api/getrooms/:groupId', gc.getRooms)
 app.post('/api/addmessage', gc.addMessage)
 app.delete('/api/deletegroup/:group_id', authCheck, gc.deleteGroup)
 app.post('/api/joingroup/:group_id', authCheck, gc.joinGroup)
+app.delete('/api/leavegroup/:group_id', gc.leaveGroup)
 app.get('/api/getjoinedgroups', authCheck, gc.getJoinedGroups)
 app.put('/api/editgroup/:group_id', authCheck, gc.editGroup)
 
@@ -80,7 +84,7 @@ io.on("connection", socket => {
     });
 
     socket.on('delete message', async data => {
-        const {messageId, groupId} = data
+        const { messageId, groupId } = data
         const db = app.get('db')
         await db.delete_message(messageId)
         let messages = await db.get_messages(groupId)
@@ -88,7 +92,7 @@ io.on("connection", socket => {
     })
 
     socket.on('edit message', async data => {
-        const {messageId, newMessage, groupId} = data
+        const { messageId, newMessage, groupId } = data
         const db = app.get('db')
         await db.edit_message(messageId, newMessage)
         let messages = await db.get_messages(groupId)

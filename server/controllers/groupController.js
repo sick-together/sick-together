@@ -20,16 +20,27 @@ module.exports = {
     res.send(initialRoom)
   },
   async deleteGroup(req, res) {
+    console.log('hit')
     let { group_id } = req.params;
     const db = req.app.get("db");
     let groups = await db.delete_group([+group_id]);
     res.send(groups);
   },
   async joinGroup(req, res) {
-    let {id} = req.session.user
-    let {group_id} = req.params
+    let { id } = req.session.user
+    let { group_id } = req.params
     const db = req.app.get('db')
     let joinedGroups = await db.join_group([
+      id,
+      group_id
+    ])
+    res.send(joinedGroups)
+  },
+  async leaveGroup(req, res) {
+    let { id } = req.session.user
+    let { group_id } = req.params
+    const db = req.app.get('db')
+    let joinedGroups = await db.leave_group([
       id,
       group_id
     ])
@@ -43,17 +54,17 @@ module.exports = {
   async getJoinedGroups(req, res) {
     let { id } = req.session.user
     const db = req.app.get('db')
-    let joinedGroups = await db.get_joined_groups(id)
+    let joinedGroups = await db.get_joined_groups(+id)
     res.send(joinedGroups)
   },
-  async searchGroups(req, res){
-    let {search, myareachecked} = req.query
+async searchGroups(req, res) {
+    let { search, myareachecked } = req.query
     const sqlSearch = `%${search}%`
     const db = req.app.get('db')
-    if (myareachecked === 'true' && search){
+    if (myareachecked === 'true' && search) {
       let results = await db.search_all(sqlSearch)
       res.send(results)
-    }else {
+    } else {
       let results = await db.search_local([sqlSearch, req.session.user.city, req.session.user.state])
       res.send(results)
     }
@@ -103,5 +114,12 @@ module.exports = {
       +group_id
     ]);
     res.send(groups);
+  },
+  async deleteRoom(req,res){
+    let {room_id} = req.params
+    let {group_id} = req.body
+    const db = req.app.get('db')
+    let rooms = await db.delete_room([room_id, group_id])
+    res.send(rooms)
   }
 };

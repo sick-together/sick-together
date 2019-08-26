@@ -14,7 +14,9 @@ import {
   CLEAR_SELECTED,
   SEARCH_GROUPS,
   EDIT_GROUP,
-  SET_EDIT_ID
+  SET_EDIT_ID,
+  LEAVE_GROUP,
+  DELETE_ROOM
 } from "./actionTypes";
 
 const initialState = {
@@ -48,7 +50,6 @@ export const getGroupMessages = groupId => {
   let data = axios
     .get(`/api/getgroupmessages/${groupId}`)
     .then(res => res.data);
-  console.log("Group Messages:", data);
   return {
     type: GET_GROUP_MESSAGES,
     payload: data
@@ -57,7 +58,6 @@ export const getGroupMessages = groupId => {
 
 export const getRooms = groupId => {
   let data = axios.get(`/api/getrooms/${groupId}`).then(res => res.data);
-  console.log("Rooms:", data);
   return {
     type: GET_ROOMS,
     payload: data
@@ -120,6 +120,14 @@ export function addNewRoom(newRoom, group_id) {
     payload: data
   };
 }
+export function deleteRoom(room_id, group_id) {
+  let data = axios.delete(`/api/deleteroom/${room_id}`, { group_id })
+    .then(res => res.data)
+  return {
+    type: DELETE_ROOM,
+    payload: data
+  }
+}
 export function clearSelectedData() {
   return {
     type: CLEAR_SELECTED
@@ -134,6 +142,10 @@ export function deleteGroup(group_id) {
 export function joinGroup(group_id) {
   let data = axios.post(`/api/joingroup/${group_id}`).then(res => res.data);
   return { type: JOIN_GROUP, payload: data };
+}
+export function leaveGroup(group_id) {
+  let data = axios.delete(`/api/leavegroup/${group_id}`).then(res => res.data)
+  return { type: LEAVE_GROUP, payload: data }
 }
 
 export function getJoinedGroups() {
@@ -187,6 +199,18 @@ export default function(state = initialState, action) {
         ...state,
         rooms: payload
       };
+    case ADD_ROOM + '_FULFILLED':
+      return {
+        ...state,
+        rooms: payload
+      }
+    case DELETE_ROOM + '_FULFILLED':
+      return {
+        ...state,
+        rooms: payload
+      }
+    case DELETE_GROUP + '_FULFILLED':
+      return { ...state, groups: payload }
     case ADD_MESSAGE + "_FULFILLED":
       return {
         ...state,
@@ -202,14 +226,14 @@ export default function(state = initialState, action) {
       return { ...state, groups: payload, lastGroupId: +payload[0].group_id };
     case JOIN_GROUP + "_FULFILLED":
       return { ...state, joinedGroups: payload };
+    case LEAVE_GROUP + '_FULFILLED':
+      return { ...state, joinedGroups: payload }
     case GET_JOINED_GROUPS + "_FULFILLED":
       return { ...state, joinedGroups: payload };
     case EDIT_GROUP + '_FULFILLED':
       return { ...state, groups: payload}
     case SET_EDIT_ID:
       return { ...state, editId: payload}
-    case DELETE_GROUP + '_FULFILLED':
-        return { ...state, groups: payload}
     default:
       return state;
   }

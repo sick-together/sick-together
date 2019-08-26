@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
 // import clsx from 'clsx';
 import { Redirect } from 'react-router-dom'
+import Tenor from 'react-tenor'
 import io from 'socket.io-client';
-import { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData } from '../../Redux/groupReducer.js'
+import { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData, deleteRoom } from '../../Redux/groupReducer.js'
 import { connect } from 'react-redux';
 import moment from 'moment'
 import './Group.css'
@@ -10,6 +11,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
@@ -24,15 +26,18 @@ import AddIcon from '@material-ui/icons/Add';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Icon from '@material-ui/core/Icon';
 import TextField from '@material-ui/core/TextField';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import GifIcon from '@material-ui/icons/Gif';
 import { makeStyles } from '@material-ui/core/styles';
 
 const socket = io()
 
 const useStyles = makeStyles(theme => ({
     root: {
-        // padding: theme.spacing(0, 0, 1.5, 0),
-        margin: '20px',
-        // height: '50vh'
+        margin: '20px 20px 10px 20px',
+        height: '90vh'
     },
     flex: {
         display: 'flex',
@@ -49,12 +54,16 @@ const useStyles = makeStyles(theme => ({
     },
     avatar: {
         margin: 5,
-        width: 30,
-        height: 30,
+        width: 45,
+        height: 45,
     },
     topicsWindow: {
         width: '20%',
-        height: '500px',
+        ['@media (max-width:768px)']: {
+            width: '33%',
+            display: 'none'
+        },
+        height: '82vh',
         borderRight: '1px solid rgba(0, 0, 0, 0.3)'
     },
     fab: {
@@ -63,19 +72,24 @@ const useStyles = makeStyles(theme => ({
     },
     chatWindow: {
         width: '100%',
-        height: '450px',
+        height: '76.5vh',
         // padding: '20px',
         overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column-reverse'
     },
     chatBox: {
-        width: '85%',
+        width: '86%',
         marginLeft: '15px',
+        ['@media (max-width:750px)']: {
+            width: '59%',
+            marginLeft: '5px'
+        },
         paddingBottom: 5
     },
     button: {
-        width: '10%'
+        width: '10%',
+        height: '40px'
     },
     textField: {
         width: '100%',
@@ -83,6 +97,11 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         position: 'absolute',
         bottom: 0,
+        minHeight: '53px',
+        ['@media (max-width:750px)']: {
+            minHeight: '44px',
+            maxHeight: '44px'
+        },
     },
     message: {
         display: 'flex',
@@ -90,7 +109,8 @@ const useStyles = makeStyles(theme => ({
         // alignItems: 'center',
         padding: '5px 10px',
         // borderTop: '1px solid grey',
-        borderRadius: '5px'
+        borderRadius: '5px',
+
     },
     messageContent: {
         marginLeft: '5px'
@@ -133,6 +153,26 @@ function Group(props) {
     const [messages, setMessages] = React.useState([])
     const [currentGroup, changeCurrentGroup] = React.useState('')
     const [currentGroupId, changeCurrentGroupId] = React.useState(null)
+    const [gifSearchToggled, toggleGifSearch] = React.useState(false)
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+
+    function handleClick(event) {
+        setAnchorEl(event.currentTarget);
+    }
+
+    function handleClose() {
+        setAnchorEl(null);
+    }
+
+    function youtubeParser(url) {
+        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        return (
+            (match && match[7].length == 11) ? 
+            (<iframe width="400" height="250" src={`https://www.youtube.com/embed/${match[7]}`} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen="allowFullScreen" ></iframe>) : null
+        )
+    }
     //Destructuring
     let { selectedGroup, groupMessages, rooms } = props.groups
     let { user } = props.user
@@ -151,6 +191,13 @@ function Group(props) {
         }
 
     }, [selectedGroup[0]])
+
+    useEffect(() => {
+        if (selectedGroup && selectedGroup[0]) {
+            let { group_id } = selectedGroup[0]
+            props.getRooms(+group_id)
+        }
+    }, [rooms.length])
 
     useEffect(() => {
 
@@ -218,6 +265,7 @@ function Group(props) {
                         userId: user.id,
                         timeStamp
                     })
+
                     changeTextValue('')
                 }
             })
@@ -264,12 +312,26 @@ function Group(props) {
         }
     }
 
+    function menuRoomChange(roomName) {
+        changeCurrentRoom(roomName)
+        handleClose()
+    }
+
+    function removeRoom(roomId, groupId) {
+        props.deleteRoom(roomId, groupId)
+        changeCurrentRoom('general')
+    }
+
     function joinGroup(groupId, groupName) {
         console.log('hit join group')
         socket.emit('join room', {
             group: groupId,
             groupName: groupName
         })
+    }
+    function handleGifSelect(result) {
+        document.getElementById("gifIcon").click()
+        changeTextValue(result)
     }
 
 
@@ -290,28 +352,59 @@ function Group(props) {
                 {!user.loggedIn ? <Redirect to='/' /> : null}
                 <Paper className={classes.root}>
                     <Paper style={{ borderBottom: '.5px solid rgba(189, 195, 199, 0.5)' }}>
-                        <section className={classes.flex} style={{ padding: '10px' }}>
-                            <Avatar alt="Group Avatar" src={group_picture} className={classes.bigAvatar} />
-                            <div className={classes.groupTitle}>
-                                <Typography variant='h5' component='h5'>
-                                    {group_name}
-                                </Typography>
-                                <Typography component='p'>
-                                    #{currentRoom}
-                                </Typography>
+                        <section className={classes.flex} style={{ padding: '10px', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Avatar alt="Group Avatar" src={group_picture} className={classes.bigAvatar} />
+                                <div className={classes.groupTitle}>
+                                    <Typography variant='h5' component='h5'>
+                                        {group_name}
+                                    </Typography>
+                                    <Typography component='p'>
+                                        #{currentRoom}
+                                    </Typography>
+                                </div>
+                            </div>
+                            <div style={{ float: 'right' }}>
+                                <IconButton aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+                                    <MoreVertIcon />
+                                </IconButton>
+                                <Menu
+                                    id="simple-menu"
+                                    anchorEl={anchorEl}
+                                    keepMounted
+                                    open={Boolean(anchorEl)}
+                                    onClose={handleClose}
+                                >
+                                    <MenuItem onClick={handleClose}>Leave Group</MenuItem>
+                                    <MenuItem onClick={handleClose}>Edit Group</MenuItem>
+                                    <Divider style={{ width: '100%' }} />
+                                    {rooms.map(topic => {
+                                        return (
+                                            <ListItem button key={topic.room_id} onClick={() => menuRoomChange(topic.room_name)}>
+                                                <ListItemText>#{topic.room_name}</ListItemText>
+                                            </ListItem>
+                                        )
+
+                                    })}
+
+
+                                </Menu>
                             </div>
                         </section>
                     </Paper>
 
                     <section className={classes.flex}>
-                        <Paper className={classes.topicsWindow}>
+                        <Paper className={classes.topicsWindow} >
                             <List>
                                 {
                                     rooms.map(topic => {
                                         return (
-                                            <ListItem button key={topic.room_id} onClick={() => changeCurrentRoom(topic.room_name)}>
-                                                <ListItemText>#{topic.room_name}</ListItemText>
-                                            </ListItem>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <ListItem button key={topic.room_id} onClick={() => changeCurrentRoom(topic.room_name)}>
+                                                    <ListItemText>#{topic.room_name}</ListItemText>
+                                                </ListItem>
+                                                {user.id === user_id && topic.room_name !== 'general' ? (<IconButton aria-label='delete' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => removeRoom(topic.room_id, topic.group_id)}><DeleteIcon /></IconButton>) : null}
+                                            </div>
                                         )
 
                                     })
@@ -320,12 +413,11 @@ function Group(props) {
                                     <ListItem style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         < Fab color="primary" aria-label="add" size='small' className={classes.fab} onClick={() => flipEdit(!editing)}>
                                             {!editing ? (<AddIcon />) : (<ArrowBackIcon />)}
-
                                         </Fab>
                                         {!editing
                                             ? <ListItemText>
-                                                Add a room!
-                                                </ListItemText>
+                                                <p style={{ fontSize: '13px' }}>Add a room!</p>
+                                            </ListItemText>
                                             : <TextField
                                                 id="standard-bare"
                                                 className={classes.textField}
@@ -337,11 +429,10 @@ function Group(props) {
                                                 onKeyDown={addNewRoom}
                                             />
                                         }
-
                                     </ListItem>) : null}
                             </List>
                         </Paper>
-                        <div style={{ width: '100%', position: 'relative', height: '500px' }}>
+                        <div style={{ width: '100%', position: 'relative', height: '82vh' }}>
                             <section className={classes.chatWindow}>
                                 {messages && messages.length ?
 
@@ -349,7 +440,7 @@ function Group(props) {
                                         if (message.room_name === currentRoom && message) {
                                             return (
                                                 <div className={classes.message} key={message.message_id} >
-                                                    <Paper style={{ display: 'flex', justifyContent: 'space-between', borderRadius: 0 }}>
+                                                    <Paper style={{ display: 'flex', justifyContent: 'space-between', borderRadius: 0, background: '#f8f8f8' }}>
                                                         <section style={{ display: 'flex' }}>
                                                             <Avatar alt={message.username} src={message.profile_pic} className={classes.avatar} />
                                                             <Typography variant='p' style={{ display: 'flex', alignItems: 'center' }}>{message.username}</Typography>
@@ -362,23 +453,29 @@ function Group(props) {
                                                                 <IconButton aria-label='delete' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => deleteMessage(message.message_id)}><DeleteIcon /></IconButton>
                                                             </div>) : message.edited === true ? (<p style={{ display: 'flex', alignItems: 'center', marginRight: '5px', color: '#555962', fontSize: '12.5px' }}>(edited)</p>) : null}
                                                     </Paper>
-                                                    <Paper style={{ display: 'flex', textAlign: 'center', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, borderRadius: 0, borderBottomRightRadius: 4, borderBottomLeftRadius: 4, padding: '0px 7px' }}>
+                                                    <Paper style={{ display: 'flex', textAlign: 'center', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, borderRadius: 0, borderBottomRightRadius: 4, borderBottomLeftRadius: 4, padding: '0px 7px', position: 'relative' }}>
                                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                            {!editMessage ? (<Typography variant='p' className={classes.messageContent}>
-                                                                {message.message}
-                                                            </Typography>) : editMessage && editId === message.message_id ? (<input
-                                                                // id="standard-bare"
-                                                                style={{ width: '30vw' }}
-                                                                defaultValue={message.message}
-                                                                margin="normal"
-                                                                // inputProps={{ 'aria-label': 'bare' }}
-                                                                onChange={e => changeNewMessage(e.target.value)}
-                                                                onKeyDown={enterMessageChanges} />)
-                                                                    : (<Typography variant='p' className={classes.messageContent}>
+                                                            {!editMessage && message.message.startsWith('https://media') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : !editMessage && message.message.startsWith('https://www.youtube') ? (
+                                                                <div className='yt-link'>
+                                                                    {youtubeParser(message.message)}
+                                                                </div>
+                                                            ) : !editMessage && message.message.startsWith('http') ? (
+                                                                <div ><img className='chat-image' alt='' src={message.message} /></div>
+                                                            )
+                                                            : !editMessage && !message.message.startsWith('http') ?
+                                                                    (<Typography variant='p' className={classes.messageContent}>
                                                                         {message.message}
-                                                                    </Typography>)}
+                                                                    </Typography>) : editMessage && editId === message.message_id ? (<input
+                                                                        style={{ width: '30vw' }}
+                                                                        defaultValue={message.message}
+                                                                        margin="normal"
+                                                                        onChange={e => changeNewMessage(e.target.value)}
+                                                                        onKeyDown={enterMessageChanges} />)
+                                                                        : editMessage && message.message.startsWith('http') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : (<Typography variant='p' className={classes.messageContent}>
+                                                                            {message.message}
+                                                                        </Typography>)}
                                                         </div>
-                                                        <div>
+                                                        <div style={{position: 'absolute', bottom: 0, right: 0, padding: 10}}>
                                                             <Typography variant='p' style={{ color: '#555962', fontSize: '12.5px', display: 'flex' }}>
                                                                 {moment(message.timestamp).calendar()}
                                                             </Typography>
@@ -387,27 +484,34 @@ function Group(props) {
                                                 </div>
                                             )
                                         } else return null
-                                    }) : <Typography varient='p' style={{ marginBottom: '10px', marginLeft: '10px'}}>
+                                    }) : <Typography varient='p' style={{ marginBottom: '10px', marginLeft: '10px' }}>
                                         This chat is empty!
                                     </Typography>
                                 }
                             </section>
                             <Paper className={classes.textField} style={{ borderTop: '0.5px solid rgba(189, 195, 199, 0.5)', borderRadius: 0, borderBottomRightRadius: 4, borderBottomLeftRadius: 4 }}>
-                                <TextField
-                                    id="standard-name"
-                                    label="Send a message!"
-                                    className={classes.chatBox}
-                                    value={textValue}
-                                    onChange={e => changeTextValue(e.target.value)}
-                                    onKeyDown={enterMessage}
-                                />
-
-                                <Button variant="contained" color="primary" className={classes.button}
-                                    onClick={sendMessage}
-                                >
-                                    Send
-                            <Icon className={classes.rightIcon}>send</Icon>
-                                </Button>
+                                {!gifSearchToggled ?
+                                    (
+                                        <TextField
+                                            id="standard-name"
+                                            label="Send a message!"
+                                            className={(classes.chatBox)}
+                                            margin="dense"
+                                            variant="outlined"
+                                            value={textValue}
+                                            autoComplete='off'
+                                            onChange={e => changeTextValue(e.target.value)}
+                                            onKeyDown={enterMessage}
+                                            style={{ maxHeight: '44px', padding: 0 }}
+                                        />) : (<Tenor token="BH9EX9JC7WAE" onSelect={result => handleGifSelect(result.media[0].gif.url)} />)}
+                                <div style={{ position: 'absolute', right: 0, display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', maxHeight: '44px' }}>
+                                    <Button variant="contained" color="primary" className={classes.button}
+                                        onClick={sendMessage}
+                                    >
+                                        Send
+                                     <i style={{ marginLeft: '3px' }} className="fas fa-comment-medical" />
+                                    </Button> <IconButton style={{ marginRight: '3px', display: 'flex', flexDirection: 'column', alignItems: 'center' }} onClick={() => toggleGifSearch(!gifSearchToggled)} title='Search GIFs' id='gifIcon'>+<GifIcon /></IconButton>
+                                </div>
                             </Paper>
                         </div>
 
@@ -426,5 +530,5 @@ function mapStateToProps(state) {
 }
 export default connect(
     mapStateToProps,
-    { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData }
+    { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData, deleteRoom }
 )(Group);

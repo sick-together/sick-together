@@ -1,2 +1,4 @@
 SELECT * FROM groups
-ORDER BY groups.group_id DESC;
+ORDER BY groups.members DESC;
+
+--ordering by Group Members 

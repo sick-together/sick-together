@@ -45,13 +45,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Register(props) {
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [city, setCity] = React.useState("");
-  const [state, setStateUS] = React.useState("");
-  const [open, setOpen] = React.useState(false);
-
 function Register(props){
   const [username, setUsername] = React.useState('')
   const [password, setPassword] = React.useState('')

@@ -50,12 +50,12 @@ module.exports = {
     getUser(req, res) {
         res.send(req.session.user);
     },
-    async editUser(req, res){
-        let {user_id} = req.params
-        let {username, city, state} = req.body
+    async editUser(req, res) {
+        let { user_id } = req.params
+        let { username, city, state } = req.body
         const db = req.app.get('db')
         let [result] = await db.edit_user([+user_id, username, city, state])
-        if(result){
+        if (result) {
             req.session.user = {
                 username: result.username,
                 id: result.user_id,
@@ -67,11 +67,21 @@ module.exports = {
         }
         res.send(req.session.user)
     },
-    async editUserProfilePic(req, res){
-        let {user_id} = req.params
-        let {profile_pic} = req.body
+    async editUserProfilePic(req, res) {
+        let { user_id } = req.params
+        let { profile_pic } = req.body
         const db = req.app.get('db')
-        let result = await db.edit_user_profile_pic([+user_id, profile_pic])
-        res.send(result)
+        let [result] = await db.edit_user_profile_pic([+user_id, profile_pic])
+        if (result) {
+            req.session.user = {
+                username: result.username,
+                id: result.user_id,
+                profilePic: result.profile_pic,
+                city: result.city,
+                state: result.state,
+                loggedIn: true
+            }
+        }
+        res.send(req.session.user)
     }
 }

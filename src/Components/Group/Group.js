@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import Tenor from 'react-tenor'
 import io from 'socket.io-client';
-import { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData, deleteRoom } from '../../Redux/groupReducer.js'
+import { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData, deleteRoom, leaveGroup, getEditInfo } from '../../Redux/groupReducer.js'
 import { connect } from 'react-redux';
 import moment from 'moment'
 import './Group.css'
@@ -54,8 +54,14 @@ const useStyles = makeStyles(theme => ({
     },
     avatar: {
         margin: 5,
-        width: 45,
-        height: 45,
+        width: 55,
+        height: 55,
+        border: '1px solid rgba(189, 195, 199, 0.7)'
+    },
+    bigAvatar: {
+        margin: 5,
+        width: 75,
+        height: 75
     },
     topicsWindow: {
         width: '20%',
@@ -169,8 +175,8 @@ function Group(props) {
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
         var match = url.match(regExp);
         return (
-            (match && match[7].length == 11) ? 
-            (<iframe width="400" height="250" src={`https://www.youtube.com/embed/${match[7]}`} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen="allowFullScreen" ></iframe>) : null
+            (match && match[7].length == 11) ?
+                (<iframe width="400" height="250" src={`https://www.youtube.com/embed/${match[7]}`} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen="allowFullScreen" ></iframe>) : null
         )
     }
     //Destructuring
@@ -375,8 +381,9 @@ function Group(props) {
                                     open={Boolean(anchorEl)}
                                     onClose={handleClose}
                                 >
-                                    <MenuItem onClick={handleClose}>Leave Group</MenuItem>
-                                    <MenuItem onClick={handleClose}>Edit Group</MenuItem>
+                                    <a href='#/dashboard' onClick={() => props.leaveGroup(group_id)}><MenuItem>Leave Group</MenuItem></a>
+                                    {user.id === user_id ? (<a href={"#/editgroup/" + group_id} onClick={() => props.getEditInfo(group_id)}><MenuItem>Edit Group</MenuItem></a>) : null}
+
                                     <Divider style={{ width: '100%' }} />
                                     {rooms.map(topic => {
                                         return (
@@ -462,20 +469,20 @@ function Group(props) {
                                                             ) : !editMessage && message.message.startsWith('http') ? (
                                                                 <div ><img className='chat-image' alt='' src={message.message} /></div>
                                                             )
-                                                            : !editMessage && !message.message.startsWith('http') ?
-                                                                    (<Typography variant='p' className={classes.messageContent}>
-                                                                        {message.message}
-                                                                    </Typography>) : editMessage && editId === message.message_id ? (<input
-                                                                        style={{ width: '30vw' }}
-                                                                        defaultValue={message.message}
-                                                                        margin="normal"
-                                                                        onChange={e => changeNewMessage(e.target.value)}
-                                                                        onKeyDown={enterMessageChanges} />)
-                                                                        : editMessage && message.message.startsWith('http') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : (<Typography variant='p' className={classes.messageContent}>
+                                                                    : !editMessage && !message.message.startsWith('http') ?
+                                                                        (<Typography variant='p' className={classes.messageContent}>
                                                                             {message.message}
-                                                                        </Typography>)}
+                                                                        </Typography>) : editMessage && editId === message.message_id ? (<input
+                                                                            style={{ width: '30vw' }}
+                                                                            defaultValue={message.message}
+                                                                            margin="normal"
+                                                                            onChange={e => changeNewMessage(e.target.value)}
+                                                                            onKeyDown={enterMessageChanges} />)
+                                                                            : editMessage && message.message.startsWith('http') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : (<Typography variant='p' className={classes.messageContent}>
+                                                                                {message.message}
+                                                                            </Typography>)}
                                                         </div>
-                                                        <div style={{position: 'absolute', bottom: 0, right: 0, padding: 10}}>
+                                                        <div style={{ position: 'absolute', bottom: 0, right: 0, padding: 10 }}>
                                                             <Typography variant='p' style={{ color: '#555962', fontSize: '12.5px', display: 'flex' }}>
                                                                 {moment(message.timestamp).calendar()}
                                                             </Typography>
@@ -530,5 +537,5 @@ function mapStateToProps(state) {
 }
 export default connect(
     mapStateToProps,
-    { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData, deleteRoom }
+    { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData, deleteRoom, leaveGroup, getEditInfo }
 )(Group);

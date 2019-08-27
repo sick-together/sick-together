@@ -6,6 +6,10 @@ import LeftNav from './Components/LeftNav/LeftNav'
 import { connect } from 'react-redux'
 import { getUser } from './Redux/userReducer.js';
 import routes from './routes'
+import firebase from 'firebase'
+import config from './config/firebaseConfig'
+
+firebase.initializeApp(config)
 
 class App extends Component {
   constructor() {

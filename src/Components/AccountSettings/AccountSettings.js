@@ -106,7 +106,9 @@ function AccountSetttings(props) {
     return (
         <Paper className={classes.root}>
             <Typography variant='h3' className={classes.accountTitle}>Account Settings</Typography>
+            
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                
                 <Avatar className={classes.accountAvatar} src={props.user.profilePic}>
                 </Avatar>
                 <div className='url-icon'>

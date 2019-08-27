@@ -20,15 +20,23 @@ import MenuItem from "@material-ui/core/MenuItem";
 import "./Login.css";
 
 const useStyles = makeStyles(theme => ({
+  mainContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   root: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    marginTop: theme.spacing(8),
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
+    height: 575
   },
   loginButton: {
     margin: 15
+  },
+  registerTitle:{
+    marginBottom: 15
   },
   registerLink: {
     display: "flex"
@@ -76,9 +84,13 @@ function Register(props){
   const classes = useStyles();
   if (user.loggedIn) return <Redirect to="/dashboard" />;
   return (
+    <div className='background'>
     <Container component="main" maxWidth="xs" className={classes.mainContainer}>
       <CssBaseline />
       <Paper className={classes.root}>
+        <Typography variant='h4' className={classes.registerTitle}>
+          Sick Together
+        </Typography>
         <Avatar className={classes.avatarIcon}>
           <LockOutlinedIcon />
         </Avatar>
@@ -205,6 +217,7 @@ function Register(props){
         </Grid>
       </Paper>
     </Container>
+    </div>
   );
 }
 

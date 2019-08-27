@@ -9,7 +9,8 @@ import {
   setEditId,
   joinGroup,
   leaveGroup,
-  getEditInfo
+  getEditInfo,
+  getJoinedGroups
 } from "../../Redux/groupReducer.js";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -66,17 +67,22 @@ const useStyles = makeStyles({
 function Groups(props) {
   const classes = useStyles();
   let { groups, joinedGroups, } = props.groups;
+  let { user } = props.user
+  const [searchInput, setSearchInput] = React.useState('')
+  const [myAreaChecked, changeAreaChecker] = React.useState(false);
   let arrayOfJoinedIds = []
   if (joinedGroups && joinedGroups.length) {
     joinedGroups.forEach(item => arrayOfJoinedIds.push(item.group_id))
   }
   useEffect(() => {
-    props.getGroups()
-  }, [arrayOfJoinedIds.length])
+    if (searchInput === ''){
+      props.getGroups()
+    }
+    props.getJoinedGroups()
+
+  }, [groups.length])
   console.log('Array of Joined:', arrayOfJoinedIds)
-  let { user } = props.user
-  const [searchInput, setSearchInput] = React.useState('')
-  const [myAreaChecked, changeAreaChecker] = React.useState(false);
+ 
 
 
   function setSearch(e) {
@@ -313,5 +319,5 @@ function mapStateToProps(state) {
 }
 export default connect(
   mapStateToProps,
-  { getSelectedGroup, deleteGroup, searchGroups, getGroups, joinGroup, leaveGroup, editGroup, setEditId, getEditInfo }
+  { getSelectedGroup, deleteGroup, searchGroups, getGroups, joinGroup, leaveGroup, editGroup, setEditId, getEditInfo, getJoinedGroups }
 )(Groups);

@@ -1,4 +1,6 @@
+import React from 'react'
 import axios from "axios";
+import { Redirect } from 'react-router-dom'
 import {
   GET_GROUPS,
   GET_SELECTED_GROUP,
@@ -187,6 +189,7 @@ export default function (state = initialState, action) {
         groups: payload
       };
     case GET_SELECTED_GROUP + "_FULFILLED":
+      let groupId = payload[0].group_id;
       return {
         ...state,
         selectedGroup: payload
@@ -230,10 +233,11 @@ export default function (state = initialState, action) {
       console.log(payload[0].group_id);
       if (payload && payload[0].group_id) {
         let groupId = payload[0].group_id;
-        console.log(groupId);
+        joinGroup(groupId)
         createGeneral(groupId);
+        return { ...state, groups: payload, lastGroupId: +payload[0].group_id };
       }
-      return { ...state, groups: payload, lastGroupId: +payload[0].group_id };
+
     case JOIN_GROUP + "_FULFILLED":
       return { ...state, joinedGroups: payload };
     case LEAVE_GROUP + '_FULFILLED':

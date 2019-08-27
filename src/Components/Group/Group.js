@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 // import clsx from 'clsx';
 import { Redirect } from 'react-router-dom'
 import Tenor from 'react-tenor'
@@ -31,12 +31,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import GifIcon from '@material-ui/icons/Gif';
 import { makeStyles } from '@material-ui/core/styles';
+import firebase from 'firebase'
+import FileUploader from 'react-firebase-file-uploader'
 
 const socket = io()
 
 const useStyles = makeStyles(theme => ({
     root: {
-        margin: '20px 20px 10px 20px',
+        // margin: '20px 20px 10px 20px',
         height: '90vh'
     },
     flex: {
@@ -60,8 +62,8 @@ const useStyles = makeStyles(theme => ({
     },
     bigAvatar: {
         margin: 5,
-        width: 75,
-        height: 75
+        width: 65,
+        height: 65
     },
     topicsWindow: {
         width: '20%',
@@ -85,10 +87,18 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column-reverse'
     },
     chatBox: {
-        width: '86%',
+        width: '90%',
         marginLeft: '15px',
+        ['@media (max-width:1024px)']: {
+            width: '84%',
+            marginLeft: '5px'
+        },
         ['@media (max-width:750px)']: {
-            width: '59%',
+            width: '70%',
+            marginLeft: '5px'
+        },
+        ['@media (max-width:375px)']: {
+            width: '68%',
             marginLeft: '5px'
         },
         paddingBottom: 5
@@ -148,6 +158,9 @@ const useStyles = makeStyles(theme => ({
 
 function Group(props) {
     //Our state
+    const fileInput = useRef(null);
+    const sendButton = useRef(null)
+
     const [textValue, changeTextValue] = React.useState('')
     const [currentRoom, changeCurrentRoom] = React.useState('general')
     const [editing, flipEdit] = React.useState(false)
@@ -163,6 +176,17 @@ function Group(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
 
+
+    function fileUploadHandler(filename) {
+        let { user } = props
+        firebase.storage().ref('uploads').child(filename).getDownloadURL()
+            .then(url => sendUpload(url))
+    }
+    function sendUpload(url) {
+        changeTextValue(url)
+        sendButton.current.click()
+
+    }
     function handleClick(event) {
         setAnchorEl(event.currentTarget);
     }
@@ -336,8 +360,9 @@ function Group(props) {
         })
     }
     function handleGifSelect(result) {
-        document.getElementById("gifIcon").click()
+        toggleGifSearch(!gifSearchToggled)
         changeTextValue(result)
+        setTimeout(function () { sendButton.current.click() }, 300);
     }
 
 
@@ -387,9 +412,14 @@ function Group(props) {
                                     <Divider style={{ width: '100%' }} />
                                     {rooms.map(topic => {
                                         return (
-                                            <ListItem button key={topic.room_id} onClick={() => menuRoomChange(topic.room_name)}>
-                                                <ListItemText>#{topic.room_name}</ListItemText>
-                                            </ListItem>
+                                            <div>
+                                                {topic.room_name === currentRoom ? (<ListItem button style={{ backgroundColor: '#E8E8E8' }} key={topic.room_id} onClick={() => menuRoomChange(topic.room_name)}>
+                                                    <ListItemText>#{topic.room_name}</ListItemText>
+                                                </ListItem>) : (<ListItem button key={topic.room_id} onClick={() => menuRoomChange(topic.room_name)}>
+                                                    <ListItemText>#{topic.room_name}</ListItemText>
+                                                </ListItem>)}
+
+                                            </div>
                                         )
 
                                     })}
@@ -407,10 +437,18 @@ function Group(props) {
                                     rooms.map(topic => {
                                         return (
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <ListItem button key={topic.room_id} onClick={() => changeCurrentRoom(topic.room_name)}>
+
+                                                {topic.room_name === currentRoom ? (<ListItem button style={{ backgroundColor: '#E8E8E8' }} key={topic.room_id} onClick={() => changeCurrentRoom(topic.room_name)}>
                                                     <ListItemText>#{topic.room_name}</ListItemText>
-                                                </ListItem>
-                                                {user.id === user_id && topic.room_name !== 'general' ? (<IconButton aria-label='delete' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => removeRoom(topic.room_id, topic.group_id)}><DeleteIcon /></IconButton>) : null}
+                                                    {user.id === user_id && topic.room_name !== 'general' ? (<IconButton aria-label='delete' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => removeRoom(topic.room_id, topic.group_id)}><DeleteIcon /></IconButton>) : null}
+                                                </ListItem>) : (<ListItem button key={topic.room_id} onClick={() => changeCurrentRoom(topic.room_name)} >
+                                                    <ListItemText>#{topic.room_name}</ListItemText>
+                                                    {user.id === user_id && topic.room_name !== 'general' ? (<IconButton aria-label='delete' fontSize='small' style={{ padding: '5px 5px' }} onClick={() => removeRoom(topic.room_id, topic.group_id)}><DeleteIcon /></IconButton>) : null}
+                                                </ListItem>)}
+
+
+
+
                                             </div>
                                         )
 
@@ -511,13 +549,25 @@ function Group(props) {
                                             onKeyDown={enterMessage}
                                             style={{ maxHeight: '44px', padding: 0 }}
                                         />) : (<Tenor token="BH9EX9JC7WAE" onSelect={result => handleGifSelect(result.media[0].gif.url)} />)}
-                                <div style={{ position: 'absolute', right: 0, display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', maxHeight: '44px' }}>
-                                    <Button variant="contained" color="primary" className={classes.button}
+                                <div style={{ position: 'absolute', right: 0, display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', maxHeight: '44px', marginRight: '10px' }}>
+                                    <Button variant="contained" color="primary" ref={sendButton} className={classes.button}
                                         onClick={sendMessage}
                                     >
                                         Send
                                      <i style={{ marginLeft: '3px' }} className="fas fa-comment-medical" />
-                                    </Button> <IconButton style={{ marginRight: '3px', display: 'flex', flexDirection: 'column', alignItems: 'center' }} onClick={() => toggleGifSearch(!gifSearchToggled)} title='Search GIFs' id='gifIcon'>+<GifIcon /></IconButton>
+                                    </Button>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <label style={{ display: 'none' }} ref={fileInput}><FileUploader
+                                            hidden='true'
+                                            accept='image/*'
+                                            name='fileSelected'
+                                            storageRef={firebase.storage().ref('uploads')}
+                                            onUploadSuccess={fileUploadHandler} />
+                                        </label>
+                                        <i className="fas fa-upload" style={{ color: 'darkslateblue' }} onClick={() => fileInput.current.click()} title='Upload' />
+                                        <GifIcon onClick={() => toggleGifSearch(!gifSearchToggled)} title='Search GIFs' />
+
+                                    </div>
                                 </div>
                             </Paper>
                         </div>

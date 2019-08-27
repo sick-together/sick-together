@@ -183,19 +183,19 @@ function Header(props) {
         </div>
         <Divider style={{ width: '100%' }} />
         <List>
-        <Link to='/dashboard'>
-                    <ListItem button>
-                        <ListItemIcon><HomeIcon/></ListItemIcon>
-                        <ListItemText>Home</ListItemText>
-                    </ListItem>
-                    </Link>
-        <Link to='/accountsettings'>
-                    <ListItem button>
-                        <ListItemIcon><AccountCircleIcon/></ListItemIcon>
-                        <ListItemText>My Account</ListItemText>
-                    </ListItem>
-                    </Link>
-                    
+          <Link to='/dashboard'>
+            <ListItem button onClick={handleDrawerClose}>
+              <ListItemIcon><HomeIcon /></ListItemIcon>
+              <ListItemText>Home</ListItemText>
+            </ListItem>
+          </Link>
+          <Link to='/accountsettings'>
+            <ListItem button onClick={handleDrawerClose}>
+              <ListItemIcon><AccountCircleIcon /></ListItemIcon>
+              <ListItemText>My Account</ListItemText>
+            </ListItem>
+          </Link>
+
 
           {["Inbox", "Logout"].map(
             (text, index) => (

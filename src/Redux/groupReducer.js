@@ -16,7 +16,8 @@ import {
   EDIT_GROUP,
   SET_EDIT_ID,
   LEAVE_GROUP,
-  DELETE_ROOM
+  DELETE_ROOM,
+  GET_EDIT_INFO
 } from "./actionTypes";
 
 const initialState = {
@@ -25,6 +26,7 @@ const initialState = {
   groupMessages: {},
   rooms: [],
   editId: null,
+  editInfo: [],
   joinedGroups: []
 };
 
@@ -153,17 +155,25 @@ export function getJoinedGroups() {
   return { type: GET_JOINED_GROUPS, payload: data };
 }
 
-export function editGroup(newGroupName, newGroupPicture, newDescription, newLocation, group_id) {  
-  let data = axios.put(`/api/editgroup/${group_id}`, {newGroupName, newGroupPicture, newDescription, newLocation})
+export function editGroup(newGroupName, newGroupPicture, newDescription, newLocation, group_id) {
+  let data = axios.put(`/api/editgroup/${group_id}`, { newGroupName, newGroupPicture, newDescription, newLocation })
     .then(res => res.data);
-    return { type: EDIT_GROUP, payload: data };
-  }
-
-export function setEditId(groupId) {
-  return { type: SET_EDIT_ID, payload: +groupId}
+  return { type: EDIT_GROUP, payload: data };
 }
 
-export default function(state = initialState, action) {
+export function getEditInfo(groupId) {
+  let data = axios.get(`/api/selected/${groupId}`).then(res => res.data);
+  return {
+    type: GET_EDIT_INFO,
+    payload: data
+  };
+}
+
+export function setEditId(groupId) {
+  return { type: SET_EDIT_ID, payload: +groupId }
+}
+
+export default function (state = initialState, action) {
   let { type, payload } = action;
   switch (type) {
     case GET_GROUPS + "_FULFILLED":
@@ -231,9 +241,11 @@ export default function(state = initialState, action) {
     case GET_JOINED_GROUPS + "_FULFILLED":
       return { ...state, joinedGroups: payload };
     case EDIT_GROUP + '_FULFILLED':
-      return { ...state, groups: payload}
+      return { ...state, groups: payload, editInfo: [] }
     case SET_EDIT_ID:
-      return { ...state, editId: payload}
+      return { ...state, editId: payload }
+    case GET_EDIT_INFO + '_FULFILLED':
+      return { ...state, editInfo: payload }
     default:
       return state;
   }

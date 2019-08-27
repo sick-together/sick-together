@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import clsx from "clsx";
 import {
   getSelectedGroup,
@@ -7,8 +7,9 @@ import {
   searchGroups,
   getGroups,
   setEditId,
-  joinGroup, 
-  leaveGroup
+  joinGroup,
+  leaveGroup,
+  getEditInfo
 } from "../../Redux/groupReducer.js";
 import { connect } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -131,96 +132,96 @@ function Groups(props) {
       </Paper>
       {groups && myAreaChecked
         ? (groups.map(group => {
-            if (group.location === `${user.city}, ${user.state}`) {
-              return (
-                <div className={classes.feedMaster} key={group.group_id}>
-                  <Card className={classes.card}>
-                    <a
-                      href={"#/group/" + group.group_id}
-                      key={group.group_id}
-                      onClick={() => props.getSelectedGroup(group.group_id)}
-                    >
-                      <CardActionArea>
-                        <CardMedia
-                          component="img"
-                          alt="Add group to join the chat!"
-                          height="175"
-                          image={group.group_picture}
-                          title={group.group_name}
-                        />
-                        <CardContent>
-                          <section
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center"
-                            }}
-                          >
-                            <Typography
-                              gutterBottom
-                              variant="h5"
-                              component="h2"
-                            >
-                              {group.group_name}
-                            </Typography>
-                            <Typography
-                              variant="p"
-                              style={{ color: "#555962" }}
-                            >
-                              {group.location}
-                            </Typography>
-                          </section>
-                          <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            component="p"
-                          >
-                            {group.description}
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </a>
-                    <CardActions className={classes.groupButtons}>
-                      <Button size="small" color="primary" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <GroupIcon className={classes.groupicon} />
-                        <p style={{ marginLeft: '5px' }}>{group.members}</p>
-                      </Button>
-                      {arrayOfJoinedIds.includes(+group.group_id) ? (<Button size="small" color="primary">
-                        <CheckBoxIcon className={classes.addicon} onClick={() => props.leaveGroup(group.group_id)} />
-                      </Button>) : (<Button size="small" color="primary">
-                        <AddBoxIcon className={classes.addicon} onClick={() => props.joinGroup(group.group_id)} />
-                      </Button>)}
-                      {group.user_id === props.user.user.id ? (
-                        <div>
-                           <a
-                    href={"#/editgroup/" + group.group_id}
+          if (group.location === `${user.city}, ${user.state}`) {
+            return (
+              <div className={classes.feedMaster} key={group.group_id}>
+                <Card className={classes.card}>
+                  <a
+                    href={"#/group/" + group.group_id}
                     key={group.group_id}
-                    onClick={() => props.setEditId(group.group_id)}
+                    onClick={() => props.getSelectedGroup(group.group_id)}
                   >
-                        <Button 
-                          size="small"
-                          style={{ color: "green" }}
+                    <CardActionArea>
+                      <CardMedia
+                        component="img"
+                        alt="Add group to join the chat!"
+                        height="175"
+                        image={group.group_picture}
+                        title={group.group_name}
+                      />
+                      <CardContent>
+                        <section
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                          }}
                         >
-                          Edit Group
-                        </Button>
-                        </a>
+                          <Typography
+                            gutterBottom
+                            variant="h5"
+                            component="h2"
+                          >
+                            {group.group_name}
+                          </Typography>
+                          <Typography
+                            variant="p"
+                            style={{ color: "#555962" }}
+                          >
+                            {group.location}
+                          </Typography>
+                        </section>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          component="p"
+                        >
+                          {group.description}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </a>
+                  <CardActions className={classes.groupButtons}>
+                    <Button size="small" color="primary" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <GroupIcon className={classes.groupicon} />
+                      <p style={{ marginLeft: '5px' }}>{group.members}</p>
+                    </Button>
+                    {arrayOfJoinedIds.includes(+group.group_id) ? (<Button size="small" color="primary">
+                      <CheckBoxIcon className={classes.addicon} onClick={() => props.leaveGroup(group.group_id)} />
+                    </Button>) : (<Button size="small" color="primary">
+                      <AddBoxIcon className={classes.addicon} onClick={() => props.joinGroup(group.group_id)} />
+                    </Button>)}
+                    {group.user_id === props.user.user.id ? (
+                      <div>
+                        <a
+                          href={"#/editgroup/" + group.group_id}
+                          key={group.group_id}
+                          onClick={() => props.getEditInfo(group.group_id)}
+                        >
                           <Button
                             size="small"
-                            style={{ color: "#DC143C" }}
-                            onClick={() => props.deleteGroup(group.group_id)}
+                            style={{ color: "green" }}
                           >
-                            <DeleteIcon />
-                          </Button>
-                        </div>
-                      ) : null}
-                    </CardActions>
-                  </Card>
-                </div>
-              );
-            }
-          })
+                            Edit Group
+                        </Button>
+                        </a>
+                        <Button
+                          size="small"
+                          style={{ color: "#DC143C" }}
+                          onClick={() => props.deleteGroup(group.group_id)}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      </div>
+                    ) : null}
+                  </CardActions>
+                </Card>
+              </div>
+            );
+          }
+        })
         ) : groups
-        ? (groups.map(group => {
+          ? (groups.map(group => {
             return (
               <div className={classes.feedMaster} key={group.group_id}>
                 <Card className={classes.card}>
@@ -275,15 +276,15 @@ function Groups(props) {
                     {group.user_id === props.user.user.id ? (
                       <div>
                         <a
-                    href={"#/editgroup/" + group.group_id}
-                    key={group.group_id}
-                    onClick={() => props.setEditId(group.group_id)}
-                  >
-                        <Button 
-                          size="small"
-                          style={{ color: "green" }}
+                          href={"#/editgroup/" + group.group_id}
+                          key={group.group_id}
+                          onClick={() => props.getEditInfo(group.group_id)}
                         >
-                          Edit Group
+                          <Button
+                            size="small"
+                            style={{ color: "green" }}
+                          >
+                            Edit Group
                         </Button>
                         </a>
                         <Button
@@ -312,5 +313,5 @@ function mapStateToProps(state) {
 }
 export default connect(
   mapStateToProps,
-  { getSelectedGroup, deleteGroup, searchGroups, getGroups, joinGroup, leaveGroup, editGroup, setEditId }
+  { getSelectedGroup, deleteGroup, searchGroups, getGroups, joinGroup, leaveGroup, editGroup, setEditId, getEditInfo }
 )(Groups);

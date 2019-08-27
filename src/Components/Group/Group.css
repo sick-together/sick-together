@@ -77,7 +77,6 @@ iframe {
     width: 250px;
     border-radius: 0px 0px 4px 4px;
     border: 1px solid rgba(189, 195, 199, 0.5);
-
   }
 }
 
@@ -97,10 +96,39 @@ iframe {
     width: 200px;
     border-radius: 0px 0px 4px 4px;
     border: 1px solid rgba(189, 195, 199, 0.5);
-
   }
 }
 
+@media (max-width: 375px) {
+  .chat-image {
+    margin-left: 0px;
+    margin-left: 6px;
+    height: 150px;
+    width: 160px;
+  }
+  iframe {
+    margin-left: 6px;
+    height: 150px;
+    width: 160px;
+    border-radius: 0px 0px 4px 4px;
+    border: 1px solid rgba(189, 195, 199, 0.5);
+  }
+}
+
+@media (max-width: 330px) {
+  .chat-image {
+    margin-left: 0px;
+    height: 100px;
+    width: 117px;
+  }
+  iframe {
+    margin-left: 6px;
+    height: 117px;
+    width: 125px;
+    border-radius: 0px 0px 4px 4px;
+    border: 1px solid rgba(189, 195, 199, 0.5);
+  }
+}
 
 /*Tenor Keyboard */
 .react-tenor-active {

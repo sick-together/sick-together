@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
@@ -9,6 +9,9 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
+import firebase from 'firebase'
+import FileUploader from 'react-firebase-file-uploader'
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,15 +42,27 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function EditGroup(props) {
-  const [newGroupName, setNewGroupName] = React.useState("");
-  const [newGroupPicture, setNewGroupPicture] = React.useState("");
-  const [newDescription, setNewDescription] = React.useState("");
-  const [newCity, setNewCity] = React.useState("");
-  const [newState, setNewStateUS] = React.useState("");
+  const fileInput = useRef(null);
+  const { user, editId, editInfo } = props
+  console.log(editInfo)
+  const [newGroupName, setNewGroupName] = React.useState('');
+  const [newGroupPicture, setNewGroupPicture] = React.useState('');
+  const [newDescription, setNewDescription] = React.useState('');
+  const [newCity, setNewCity] = React.useState('');
+  const [newState, setNewStateUS] = React.useState('');
   const [open, setOpen] = React.useState(false);
-  const { user, editId } = props
   const classes = useStyles();
 
+  useEffect(() => {
+    if (editInfo && editInfo[0]) {
+      setNewGroupName(editInfo[0].group_name)
+      setNewGroupPicture(editInfo[0].group_picture)
+      setNewDescription(editInfo[0].description)
+      let locationSplit = editInfo[0].location.split(', ')
+      setNewCity(locationSplit[0])
+      setNewStateUS(locationSplit[1])
+    }
+  }, [props.editInfo])
 
   function handleClose() {
     setOpen(false);
@@ -60,16 +75,17 @@ function EditGroup(props) {
   }
   function handleSubmit() {
     let newLocation = `${newCity}, ${newState}`
-    props.editGroup(newGroupName, newGroupPicture, newDescription, newLocation, editId);
+    props.editGroup(newGroupName, newGroupPicture, newDescription, newLocation, +editInfo[0].group_id);
     setNewGroupName("");
     setNewGroupPicture("");
     setNewDescription("");
-    
     setNewCity("")
     setNewStateUS("")
-    // props.editGroup(newGroupName, newGroupPicture, newDescription, newLocation);
-    console.log('name', newGroupName, 'picture', newGroupPicture, 'desc', newDescription, 'loc', newLocation)
-    // console.log('props', props);
+  }
+
+  function fileUploadHandler(filename) {
+    firebase.storage().ref('uploads').child(filename).getDownloadURL()
+      .then(url => setNewGroupPicture(url))
   }
 
   return (
@@ -82,96 +98,106 @@ function EditGroup(props) {
         value={newGroupName}
         onChange={e => setNewGroupName(e.target.value)}
       />
+      <div className='upload-container'>
       <TextField
-        className={classes.textFields}
-        name="new-group-picture"
-        label="New Group Picture"
-        value={newGroupPicture}
-        onChange={e => setNewGroupPicture(e.target.value)}
-      />
+          className={classes.textFields}
+          name="new-group_picture"
+          label="New Group Picture"
+          value={newGroupPicture}
+          onChange={e => setNewGroupPicture(e.target.value)}
+        />
+        <label style={{ display: 'none' }} ref={fileInput}><FileUploader
+          hidden='true'
+          accept='image/*'
+          name='fileSelected'
+          storageRef={firebase.storage().ref('uploads')}
+          onUploadSuccess={fileUploadHandler} />
+        </label>
+        <i className="fas fa-upload" style={{ color: 'darkslateblue' }} onClick={() => fileInput.current.click()} title='Upload' />
+      </div>
       <TextField
         className={classes.textFields}
         name="new-description"
-        label="newDescription"
+        label="New Description"
         value={newDescription}
         onChange={e => setNewDescription(e.target.value)}
       />
-     
-        <TextField
-          className={classes.textFields}
-          label="New City"
-          name="new-city"
-          value={newCity}
-          onChange={e => setNewCity(e.target.value)}
-        />
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="new-state-select">
-           New State
+
+      <TextField
+        className={classes.textFields}
+        label="New City"
+        name="new-city"
+        value={newCity}
+        onChange={e => setNewCity(e.target.value)}
+      />
+      <FormControl className={classes.formControl}>
+        <InputLabel htmlFor="new-state-select">
+          New State
           </InputLabel>
-          <Select
-            open={open}
-            onClose={handleClose}
-            onOpen={handleOpen}
-            value={newState}
-            onChange={handleChange}
-            inputProps={{
-              name: "new-state",
-              id: "user-select-new-state"
-            }}
-          >
-            <MenuItem value={"AL"}>Alabama</MenuItem>
-            <MenuItem value={"AK"}>Alaska</MenuItem>
-            <MenuItem value={"AZ"}>Arizona</MenuItem>
-            <MenuItem value={"AR"}>Arkansas</MenuItem>
-            <MenuItem value={"CA"}>California</MenuItem>
-            <MenuItem value={"CO"}>Colorado</MenuItem>
-            <MenuItem value={"CT"}>Connecticut</MenuItem>
-            <MenuItem value={"DE"}>Delaware</MenuItem>
-            <MenuItem value={"FL"}>Florida</MenuItem>
-            <MenuItem value={"GA"}>Georgia</MenuItem>
-            <MenuItem value={"HI"}>Hawaii</MenuItem>
-            <MenuItem value={"ID"}>Idaho</MenuItem>
-            <MenuItem value={"IL"}>Illinois</MenuItem>
-            <MenuItem value={"IN"}>Indiana</MenuItem>
-            <MenuItem value={"IA"}>Iowa</MenuItem>
-            <MenuItem value={"KS"}>Kansas</MenuItem>
-            <MenuItem value={"KY"}>Kentucky</MenuItem>
-            <MenuItem value={"LA"}>Louisiana</MenuItem>
-            <MenuItem value={"ME"}>Maine</MenuItem>
-            <MenuItem value={"MD"}>Maryland</MenuItem>
-            <MenuItem value={"MA"}>Massachusetts</MenuItem>
-            <MenuItem value={"MI"}>Michigan</MenuItem>
-            <MenuItem value={"MN"}>Minnesota</MenuItem>
-            <MenuItem value={"MS"}>Mississippi</MenuItem>
-            <MenuItem value={"MO"}>Missouri</MenuItem>
-            <MenuItem value={"MT"}>Montana</MenuItem>
-            <MenuItem value={"NE"}>Nebraska</MenuItem>
-            <MenuItem value={"NV"}>Nevada</MenuItem>
-            <MenuItem value={"NH"}>New Hampshire</MenuItem>
-            <MenuItem value={"NJ"}>New Jersey</MenuItem>
-            <MenuItem value={"NM"}>New Mexico</MenuItem>
-            <MenuItem value={"NY"}>New York</MenuItem>
-            <MenuItem value={"NC"}>North Carolina</MenuItem>
-            <MenuItem value={"ND"}>North Dakota</MenuItem>
-            <MenuItem value={"OH"}>Ohio</MenuItem>
-            <MenuItem value={"OK"}>Oklahoma</MenuItem>
-            <MenuItem value={"OR"}>Oregon</MenuItem>
-            <MenuItem value={"PA"}>Pennsylvania</MenuItem>
-            <MenuItem value={"RI"}>Rhode Island</MenuItem>
-            <MenuItem value={"SC"}>South Carolina</MenuItem>
-            <MenuItem value={"SD"}>South Dakota</MenuItem>
-            <MenuItem value={"TN"}>Tennessee</MenuItem>
-            <MenuItem value={"TX"}>Texas</MenuItem>
-            <MenuItem value={"UT"}>Utah</MenuItem>
-            <MenuItem value={"VT"}>Vermont</MenuItem>
-            <MenuItem value={"VA"}>Virginia</MenuItem>
-            <MenuItem value={"WA"}>Washington</MenuItem>
-            <MenuItem value={"WV"}>West Virginia</MenuItem>
-            <MenuItem value={"WI"}>Wisconsin</MenuItem>
-            <MenuItem value={"WY"}>Wyoming</MenuItem>
-          </Select>
-        </FormControl>
-      
+        <Select
+          open={open}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          value={newState}
+          onChange={handleChange}
+          inputProps={{
+            name: "new-state",
+            id: "user-select-new-state"
+          }}
+        >
+          <MenuItem value={"AL"}>Alabama</MenuItem>
+          <MenuItem value={"AK"}>Alaska</MenuItem>
+          <MenuItem value={"AZ"}>Arizona</MenuItem>
+          <MenuItem value={"AR"}>Arkansas</MenuItem>
+          <MenuItem value={"CA"}>California</MenuItem>
+          <MenuItem value={"CO"}>Colorado</MenuItem>
+          <MenuItem value={"CT"}>Connecticut</MenuItem>
+          <MenuItem value={"DE"}>Delaware</MenuItem>
+          <MenuItem value={"FL"}>Florida</MenuItem>
+          <MenuItem value={"GA"}>Georgia</MenuItem>
+          <MenuItem value={"HI"}>Hawaii</MenuItem>
+          <MenuItem value={"ID"}>Idaho</MenuItem>
+          <MenuItem value={"IL"}>Illinois</MenuItem>
+          <MenuItem value={"IN"}>Indiana</MenuItem>
+          <MenuItem value={"IA"}>Iowa</MenuItem>
+          <MenuItem value={"KS"}>Kansas</MenuItem>
+          <MenuItem value={"KY"}>Kentucky</MenuItem>
+          <MenuItem value={"LA"}>Louisiana</MenuItem>
+          <MenuItem value={"ME"}>Maine</MenuItem>
+          <MenuItem value={"MD"}>Maryland</MenuItem>
+          <MenuItem value={"MA"}>Massachusetts</MenuItem>
+          <MenuItem value={"MI"}>Michigan</MenuItem>
+          <MenuItem value={"MN"}>Minnesota</MenuItem>
+          <MenuItem value={"MS"}>Mississippi</MenuItem>
+          <MenuItem value={"MO"}>Missouri</MenuItem>
+          <MenuItem value={"MT"}>Montana</MenuItem>
+          <MenuItem value={"NE"}>Nebraska</MenuItem>
+          <MenuItem value={"NV"}>Nevada</MenuItem>
+          <MenuItem value={"NH"}>New Hampshire</MenuItem>
+          <MenuItem value={"NJ"}>New Jersey</MenuItem>
+          <MenuItem value={"NM"}>New Mexico</MenuItem>
+          <MenuItem value={"NY"}>New York</MenuItem>
+          <MenuItem value={"NC"}>North Carolina</MenuItem>
+          <MenuItem value={"ND"}>North Dakota</MenuItem>
+          <MenuItem value={"OH"}>Ohio</MenuItem>
+          <MenuItem value={"OK"}>Oklahoma</MenuItem>
+          <MenuItem value={"OR"}>Oregon</MenuItem>
+          <MenuItem value={"PA"}>Pennsylvania</MenuItem>
+          <MenuItem value={"RI"}>Rhode Island</MenuItem>
+          <MenuItem value={"SC"}>South Carolina</MenuItem>
+          <MenuItem value={"SD"}>South Dakota</MenuItem>
+          <MenuItem value={"TN"}>Tennessee</MenuItem>
+          <MenuItem value={"TX"}>Texas</MenuItem>
+          <MenuItem value={"UT"}>Utah</MenuItem>
+          <MenuItem value={"VT"}>Vermont</MenuItem>
+          <MenuItem value={"VA"}>Virginia</MenuItem>
+          <MenuItem value={"WA"}>Washington</MenuItem>
+          <MenuItem value={"WV"}>West Virginia</MenuItem>
+          <MenuItem value={"WI"}>Wisconsin</MenuItem>
+          <MenuItem value={"WY"}>Wyoming</MenuItem>
+        </Select>
+      </FormControl>
+
 
 
       <Link to="/">

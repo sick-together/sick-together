@@ -16,13 +16,20 @@ import autoMergeLevel1 from "redux-persist/es/stateReconciler/autoMergeLevel1";
 import "./Login.css";
 
 const useStyles = makeStyles(theme => ({
+  mainContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   root: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    marginTop: theme.spacing(25),
     padding: theme.spacing(3),
-    position: "absolute"
+    height: 450
+  },
+  loginTitle: {
+    marginBottom: 15
   },
   loginButton: {
     margin: 15
@@ -36,9 +43,6 @@ const useStyles = makeStyles(theme => ({
   passField: {
     marginBottom: 30
   }
-  // mainContainer: {
-  //   backgroundImage: 'url(https://images.unsplash.com/photo-1560582861-45078880e48e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60)'
-  // }
 }));
 
 function Login(props) {
@@ -63,6 +67,9 @@ function Login(props) {
       <Container component="main" className={classes.mainContainer}>
         <CssBaseline />
         <Paper className={classes.root}>
+          <Typography variant='h4' className={classes.loginTitle}>
+            Sick Together
+          </Typography>
           <Avatar className={classes.avatarIcon}>
             <LockOutlinedIcon />
           </Avatar>

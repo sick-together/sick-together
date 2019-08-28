@@ -63,7 +63,15 @@ const useStyles = makeStyles(theme => ({
     bigAvatar: {
         margin: 5,
         width: 65,
-        height: 65
+        height: 65,
+        ['@media (max-width:750px)']: {
+            width: 50,
+            height: 50,
+        },
+        ['@media (max-width:330px)']: {
+            width: 37,
+            height: 37,
+        },
     },
     topicsWindow: {
         width: '20%',
@@ -122,14 +130,16 @@ const useStyles = makeStyles(theme => ({
     message: {
         display: 'flex',
         flexDirection: 'column',
-        // alignItems: 'center',
         padding: '5px 10px',
-        // borderTop: '1px solid grey',
         borderRadius: '5px',
 
     },
     messageContent: {
-        marginLeft: '5px'
+        marginLeft: '5px',
+        maxWidth: '80vw',
+        textAlign: 'justify',
+        marginBottom: '27px',
+        marginTop: '5px'
     },
     chip: {
         marginRight: '5px',
@@ -160,7 +170,7 @@ function Group(props) {
     //Our state
     const fileInput = useRef(null);
     const sendButton = useRef(null)
-
+    const chatWindow = useRef(null)
     const [textValue, changeTextValue] = React.useState('')
     const [currentRoom, changeCurrentRoom] = React.useState('general')
     const [editing, flipEdit] = React.useState(false)
@@ -184,7 +194,8 @@ function Group(props) {
     }
     function sendUpload(url) {
         changeTextValue(url)
-        sendButton.current.click()
+        setTimeout(function () { sendButton.current.click() }, 100);
+        setTimeout(function () { chatWindow.current.scrollIntoView({ behavior: "smooth" }) }, 301)
 
     }
     function handleClick(event) {
@@ -250,8 +261,6 @@ function Group(props) {
     }, []);
 
 
-
-
     function joinSuccess(messages) {
         setJoined(true)
         setMessages(messages)
@@ -277,6 +286,7 @@ function Group(props) {
                     timeStamp
                 })
                 changeTextValue('')
+                setTimeout(function () { chatWindow.current.scrollIntoView({ behavior: "smooth" }) }, 200)
             }
         })
     }
@@ -297,6 +307,7 @@ function Group(props) {
                     })
 
                     changeTextValue('')
+                    setTimeout(function () { chatWindow.current.scrollIntoView({ behavior: "smooth" }) }, 200)
                 }
             })
         }
@@ -363,6 +374,9 @@ function Group(props) {
         toggleGifSearch(!gifSearchToggled)
         changeTextValue(result)
         setTimeout(function () { sendButton.current.click() }, 300);
+        setTimeout(function () { chatWindow.current.scrollIntoView({ behavior: "smooth" }) }, 301)
+
+
     }
 
 
@@ -382,8 +396,8 @@ function Group(props) {
             <div className='Group'>
                 {!user.loggedIn ? <Redirect to='/' /> : null}
                 <Paper className={classes.root}>
-                    <Paper style={{ borderBottom: '.5px solid rgba(189, 195, 199, 0.5)' }}>
-                        <section className={classes.flex} style={{ padding: '10px', justifyContent: 'space-between' }}>
+                    <Paper style={{ borderBottom: '.5px solid rgba(189, 195, 199, 0.5)' }} className='group-header'>
+                        <section className={classes.flex} style={{ padding: '10px', justifyContent: 'space-between', width: '100%' }}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <Avatar alt="Group Avatar" src={group_picture} className={classes.bigAvatar} />
                                 <div className={classes.groupTitle}>
@@ -420,14 +434,18 @@ function Group(props) {
                                                 </ListItem>)}
 
                                             </div>
+
                                         )
+
 
                                     })}
 
 
                                 </Menu>
                             </div>
+
                         </section>
+
                     </Paper>
 
                     <section className={classes.flex}>
@@ -478,7 +496,7 @@ function Group(props) {
                             </List>
                         </Paper>
                         <div style={{ width: '100%', position: 'relative', height: '82vh' }}>
-                            <section className={classes.chatWindow}>
+                            <section className={classes.chatWindow} ref={chatWindow}>
                                 {messages && messages.length ?
 
                                     messages.map(message => {
@@ -564,8 +582,8 @@ function Group(props) {
                                             storageRef={firebase.storage().ref('uploads')}
                                             onUploadSuccess={fileUploadHandler} />
                                         </label>
-                                        <i className="fas fa-upload" style={{ color: 'darkslateblue' }} onClick={() => fileInput.current.click()} title='Upload' />
-                                        <GifIcon onClick={() => toggleGifSearch(!gifSearchToggled)} title='Search GIFs' />
+                                        <i className="fas fa-upload icons" onClick={() => fileInput.current.click()} title='Upload' />
+                                        <GifIcon className='icons' onClick={() => toggleGifSearch(!gifSearchToggled)} title='Search GIFs' />
 
                                     </div>
                                 </div>

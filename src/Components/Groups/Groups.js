@@ -76,7 +76,7 @@ function Groups(props) {
     joinedGroups.forEach(item => arrayOfJoinedIds.push(item.group_id))
   }
   useEffect(() => {
-    if (searchInput === ''){
+    if (searchInput === '') {
       props.getGroups()
     }
     props.getJoinedGroups()
@@ -294,10 +294,10 @@ function Groups(props) {
                       <GroupIcon className={classes.groupicon} />
                       <p style={{ marginLeft: '5px' }}>{group.members}</p>
                     </Button>
-                    {arrayOfJoinedIds.includes(+group.group_id) ? (<Button size="small" color="primary">
+                    {arrayOfJoinedIds.includes(+group.group_id) ? (<Button size="small" title='Joined' color="primary">
                       <CheckBoxIcon className={classes.addicon} onClick={() => props.leaveGroup(group.group_id)} />
                     </Button>) : (<Button size="small" color="primary">
-                      <AddBoxIcon className={classes.addicon} onClick={() => props.joinGroup(group.group_id)} />
+                      <AddBoxIcon className={classes.addicon} title='Join group' onClick={() => props.joinGroup(group.group_id)} />
                     </Button>)}
                     {group.user_id === props.user.user.id ? (
                       <div>
@@ -315,6 +315,7 @@ function Groups(props) {
                         </a>
                         <Button
                           size="small"
+                          title='Delete group'
                           style={{ color: "#DC143C" }}
                           onClick={() => props.deleteGroup(group.group_id)}
                         >

@@ -9,6 +9,8 @@ const gc = require('./controllers/groupController')
 const initSession = require('./middleware/initSession');
 const authCheck = require('./middleware/authCheck');
 const { SERVER_PORT, SESSION_SECRET, CONNECTION_STRING } = process.env
+
+
 const app = express()
 const path = require('path');
 
@@ -30,71 +32,75 @@ app.post('/api/login', ac.login)
 app.post('/api/signup', ac.signup)
 app.get('/api/user', authCheck, ac.getUser)
 app.delete('/api/logout', ac.logout)
+app.put('/api/edit/:user_id', ac.editUser)
+app.put('/api/editprofile_pic/:user_id', ac.editUserProfilePic)
+
 app.post('/api/creategroup', authCheck, gc.createGroup)
 app.post('/api/creategeneral/:groupId', gc.createGeneral)
 app.post('/api/createroom/:groupId', gc.createRoom)
+app.delete('/api/deleteroom/:room_id', gc.deleteRoom)
 app.get('/api/getgroups', gc.getGroups)
+app.get('/api/searchgroups', gc.searchGroups)
 app.get('/api/selected/:groupId', gc.getSelected)
 app.get('/api/getgroupmessages/:groupId', gc.getGroupMessages)
 app.get('/api/getrooms/:groupId', gc.getRooms)
 app.post('/api/addmessage', gc.addMessage)
 app.delete('/api/deletegroup/:group_id', authCheck, gc.deleteGroup)
+app.post('/api/joingroup/:group_id', authCheck, gc.joinGroup)
+app.delete('/api/leavegroup/:group_id', gc.leaveGroup)
+app.get('/api/getjoinedgroups', authCheck, gc.getJoinedGroups)
+app.put('/api/editgroup/:group_id', authCheck, gc.editGroup)
+
 io.on("connection", socket => {
     console.log("User Connected");
-    //allow joining a chat
-    // socket.on('join room', async data => {
-    //     let { room, group } = data;
-    //     const db = app.get('db');
-    //     console.log("You just joined ", room);
-    //     let messages = await db.get_room_messages([room, group]);
-    //     console.log('messages', messages);
-    //     socket.join(room);
-    //     io.to(room).emit('room entered', messages);
-    // });
+
     socket.on('join room', async data => {
         let { group, groupName } = data
         const db = app.get('db');
         console.log("You just joined:", groupName);
         let messages = await db.get_messages(group);
-        console.log('messages', messages);
+        // console.log('messages', messages);
         socket.join(group);
         io.to(group).emit('room joined', messages);
+
     })
     //send messages
     socket.on('message sent', async data => {
-        const { message, roomId, groupId, userId } = data;
+        const { message, roomId, groupId, userId, timeStamp } = data;
         console.log(message, roomId, groupId, userId)
         const db = app.get('db');
-        await db.add_message(message, groupId, roomId, userId)
+        await db.add_message(message, groupId, roomId, userId, timeStamp)
         let messages = await db.get_messages(groupId);
         if (messages.length <= 1) io.to(groupId).emit('room joined', messages);
-        console.log('messages', messages);
-        io.in(data.groupId).emit('message dispatched', messages);
+        // console.log('messages', messages);
+        io.in(groupId).emit('message dispatched', messages);
     });
-    // socket.on("message sent", async data => {
-    //     const { room, message } = data;
-    //     const db = app.get("db");
-    //     await db.create_message({ id: room, message });
-    //     let messages = await db.fetch_message_history({ id: room });
-    //     io.to(data.room).emit("message dispatched", messages);
-    // });
-    // socket.on('leave room', data => {
-    //     const { group, groupName } = data
-    //     console.log('groupId:', group, 'groupName:', groupName)
-    //     console.log('You just left:', groupName);
-    //     socket.leave(group)
-    // });
+
+    socket.on('delete message', async data => {
+        const { messageId, groupId } = data
+        const db = app.get('db')
+        await db.delete_message(messageId)
+        let messages = await db.get_messages(groupId)
+        io.in(groupId).emit('message dispatched', messages)
+    })
+
+    socket.on('edit message', async data => {
+        const { messageId, newMessage, groupId } = data
+        const db = app.get('db')
+        await db.edit_message(messageId, newMessage)
+        let messages = await db.get_messages(groupId)
+        io.in(groupId).emit('message dispatched', messages)
+    })
+
     //disconnected
     socket.on('disconnect', () => {
         console.log('Disconnected from room');
     });
+
 })
 
-app.use( express.static( `${__dirname}/../build` ) )
 
-app.get('*', (req, res)=>{
-    res.sendFile(path.join(__dirname, '../build/index.html'));
-});
+
 
 
 

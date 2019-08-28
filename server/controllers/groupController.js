@@ -1,13 +1,14 @@
 module.exports = {
   async createGroup(req, res) {
     let { id } = req.session.user;
-    let { group_name, group_picture, description } = req.body;
+    let { group_name, group_picture, description, location } = req.body;
     const db = req.app.get("db");
     let groups = await db.create_group([
       group_name,
       id,
       group_picture,
-      description
+      description,
+      location
     ]);
     res.send(groups);
   },
@@ -19,15 +20,54 @@ module.exports = {
     res.send(initialRoom)
   },
   async deleteGroup(req, res) {
+    console.log('hit')
     let { group_id } = req.params;
     const db = req.app.get("db");
     let groups = await db.delete_group([+group_id]);
     res.send(groups);
   },
+  async joinGroup(req, res) {
+    let { id } = req.session.user
+    let { group_id } = req.params
+    const db = req.app.get('db')
+    let joinedGroups = await db.join_group([
+      id,
+      group_id
+    ])
+    res.send(joinedGroups)
+  },
+  async leaveGroup(req, res) {
+    let { id } = req.session.user
+    let { group_id } = req.params
+    const db = req.app.get('db')
+    let joinedGroups = await db.leave_group([
+      id,
+      group_id
+    ])
+    res.send(joinedGroups)
+  },
   async getGroups(req, res) {
     const db = req.app.get("db");
     let groups = await db.get_groups();
     res.send(groups);
+  },
+  async getJoinedGroups(req, res) {
+    let { id } = req.session.user
+    const db = req.app.get('db')
+    let joinedGroups = await db.get_joined_groups(+id)
+    res.send(joinedGroups)
+  },
+async searchGroups(req, res) {
+    let { search, myareachecked } = req.query
+    const sqlSearch = `%${search}%`
+    const db = req.app.get('db')
+    if (myareachecked === 'true' && search) {
+      let results = await db.search_all(sqlSearch)
+      res.send(results)
+    } else {
+      let results = await db.search_local([sqlSearch, req.session.user.city, req.session.user.state])
+      res.send(results)
+    }
   },
   async getSelected(req, res) {
     let { groupId } = req.params;
@@ -61,5 +101,28 @@ module.exports = {
     const db = req.app.get('db')
     let rooms = await db.create_room([newRoom, groupId])
     res.send(rooms)
+<<<<<<< HEAD
+=======
+  },
+  async editGroup(req, res) {
+    let { group_id } = req.params;
+    let { newGroupName, newGroupPicture, newDescription, newLocation } = req.body;
+    const db = req.app.get('db');
+    let groups = await db.edit_group([
+      newGroupName,
+      newGroupPicture,
+      newDescription,
+      newLocation,
+      +group_id
+    ]);
+    res.send(groups);
+  },
+  async deleteRoom(req,res){
+    let {room_id} = req.params
+    let {group_id} = req.body
+    const db = req.app.get('db')
+    let rooms = await db.delete_room([room_id, group_id])
+    res.send(rooms)
+>>>>>>> master
   }
 };

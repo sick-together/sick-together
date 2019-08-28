@@ -1,9 +1,9 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import { Link, Redirect } from 'react-router-dom'
-import { createGroup } from "../../Redux/groupReducer";
+import { editGroup } from "../../Redux/groupReducer";
 import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -11,6 +11,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import firebase from 'firebase'
 import FileUploader from 'react-firebase-file-uploader'
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,17 +41,28 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function CreateGroup(props) {
+function EditGroup(props) {
   const fileInput = useRef(null);
-  const [group_name, setGroupName] = React.useState("");
-  const [group_picture, setGroupPicture] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [city, setCity] = React.useState("");
-  const [state, setStateUS] = React.useState("");
+  const { user, editId, editInfo } = props
+  console.log(editInfo)
+  const [newGroupName, setNewGroupName] = React.useState('');
+  const [newGroupPicture, setNewGroupPicture] = React.useState('');
+  const [newDescription, setNewDescription] = React.useState('');
+  const [newCity, setNewCity] = React.useState('');
+  const [newState, setNewStateUS] = React.useState('');
   const [open, setOpen] = React.useState(false);
-  const { user } = props
   const classes = useStyles();
 
+  useEffect(() => {
+    if (editInfo && editInfo[0]) {
+      setNewGroupName(editInfo[0].group_name)
+      setNewGroupPicture(editInfo[0].group_picture)
+      setNewDescription(editInfo[0].description)
+      let locationSplit = editInfo[0].location.split(', ')
+      setNewCity(locationSplit[0])
+      setNewStateUS(locationSplit[1])
+    }
+  }, [props.editInfo])
 
   function handleClose() {
     setOpen(false);
@@ -59,39 +71,40 @@ function CreateGroup(props) {
     setOpen(true);
   }
   function handleChange(e) {
-    setStateUS(e.target.value);
+    setNewStateUS(e.target.value);
   }
   function handleSubmit() {
-    setGroupName("");
-    setGroupPicture("");
-    setDescription("");
-    let location = `${city}, ${state}`
-    setCity("")
-    setStateUS("")
-    props.createGroup(group_name, group_picture, description, location);
+    let newLocation = `${newCity}, ${newState}`
+    props.editGroup(newGroupName, newGroupPicture, newDescription, newLocation, +editInfo[0].group_id);
+    setNewGroupName("");
+    setNewGroupPicture("");
+    setNewDescription("");
+    setNewCity("")
+    setNewStateUS("")
   }
+
   function fileUploadHandler(filename) {
-    let { user } = props
     firebase.storage().ref('uploads').child(filename).getDownloadURL()
-      .then(url => setGroupPicture(url))
+      .then(url => setNewGroupPicture(url))
   }
+
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
       {!user.loggedIn ? <Redirect to='/' /> : null}
       <TextField
         className={classes.textFields}
-        name="group_name"
-        label="Group Name"
-        value={group_name}
-        onChange={e => setGroupName(e.target.value)}
+        name="new-group-name"
+        label="New Group Name"
+        value={newGroupName}
+        onChange={e => setNewGroupName(e.target.value)}
       />
       <div className='upload-container'>
       <TextField
           className={classes.textFields}
-          name="group_picture"
-          label="Group Picture"
-          value={group_picture}
-          onChange={e => setGroupPicture(e.target.value)}
+          name="new-group_picture"
+          label="New Group Picture"
+          value={newGroupPicture}
+          onChange={e => setNewGroupPicture(e.target.value)}
         />
         <label style={{ display: 'none' }} ref={fileInput}><FileUploader
           hidden='true'
@@ -104,32 +117,32 @@ function CreateGroup(props) {
       </div>
       <TextField
         className={classes.textFields}
-        name="description"
-        label="Description"
-        value={description}
-        onChange={e => setDescription(e.target.value)}
+        name="new-description"
+        label="New Description"
+        value={newDescription}
+        onChange={e => setNewDescription(e.target.value)}
       />
 
       <TextField
         className={classes.textFields}
-        label="City"
-        name="city"
-        value={city}
-        onChange={e => setCity(e.target.value)}
+        label="New City"
+        name="new-city"
+        value={newCity}
+        onChange={e => setNewCity(e.target.value)}
       />
       <FormControl className={classes.formControl}>
-        <InputLabel htmlFor="state-select">
-          State
+        <InputLabel htmlFor="new-state-select">
+          New State
           </InputLabel>
         <Select
           open={open}
           onClose={handleClose}
           onOpen={handleOpen}
-          value={state}
+          value={newState}
           onChange={handleChange}
           inputProps={{
-            name: "state",
-            id: "user-select-state"
+            name: "new-state",
+            id: "user-select-new-state"
           }}
         >
           <MenuItem value={"AL"}>Alabama</MenuItem>
@@ -190,7 +203,7 @@ function CreateGroup(props) {
       <Link to="/">
         {" "}
         <Button className={classes.button} onClick={handleSubmit} variant="contained">
-          Submit
+          Submit Changes
         </Button>{" "}
       </Link>
     </form>
@@ -203,5 +216,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps,
-  { createGroup }
-)(CreateGroup);
+  { editGroup }
+)(EditGroup);

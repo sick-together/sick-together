@@ -20,3 +20,10 @@ a {
   .App {
     /* background-image: linear-gradient(to bottom, #88e0ec, #4d92e0, #0b0eb9); */
   }
+
+  .upload-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+  }

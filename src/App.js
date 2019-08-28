@@ -1,11 +1,15 @@
 
 import React, { Component } from 'react';
 import './App.css';
+import 'react-tenor/dist/styles.css'
 import Header from './Components/Header/Header'
-import LeftNav from './Components/LeftNav/LeftNav'
 import { connect } from 'react-redux'
 import { getUser } from './Redux/userReducer.js';
 import routes from './routes'
+import firebase from 'firebase'
+import config from './config/firebaseConfig'
+
+firebase.initializeApp(config)
 
 class App extends Component {
   constructor() {
@@ -17,7 +21,6 @@ class App extends Component {
   }
   componentDidMount = () => {
     this.props.getUser()
-    console.log('Got User!')
   }
 
   leftNavClickHandler = () => {
@@ -27,10 +30,12 @@ class App extends Component {
 
   render() {
     let { user } = this.props
+    if (user) {
+      console.log(user)
+    }
     return (
       <div className="App" >
-        {user && user.loggedIn ? (<header><Header leftNavClickHandler={this.leftNavClickHandler} />
-          <LeftNav show={this.state.leftNavOpen} drawerClickHandler={this.leftNavClickHandler} /></header>) : null}
+        {user && user.loggedIn ? (<header><Header leftNavClickHandler={this.leftNavClickHandler} /></header>) : null}
 
         {routes}
       </div>

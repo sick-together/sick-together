@@ -1,4 +1,6 @@
-INSERT INTO rooms
-(id, room_id, group_id)
-VALUES ($1, $2, $3)
-RETURNING *
+insert into rooms (room_name, group_id)
+values($1, $2);
+
+SELECT * FROM rooms
+WHERE group_id = $2
+ORDER BY room_id;

@@ -1,5 +1,5 @@
-insert into groups (group_name, user_id, group_picture, description)
-values ($1, $2, $3, $4);
+insert into groups (group_name, user_id, group_picture, description, location)
+values ($1, $2, $3, $4, $5);
 
 -- select * from groups g
 -- join users u on u.user_id = g.user_id

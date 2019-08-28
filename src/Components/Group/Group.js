@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 // import clsx from 'clsx';
 import { Redirect } from 'react-router-dom'
+import Emoji from 'react-emoji-render'
 import Tenor from 'react-tenor'
 import io from 'socket.io-client';
 import { getSelectedGroup, getGroupMessages, getRooms, addMessage, createGeneral, addNewRoom, clearSelectedData, deleteRoom, leaveGroup, getEditInfo } from '../../Redux/groupReducer.js'
@@ -526,17 +527,13 @@ function Group(props) {
                                                                 <div ><img className='chat-image' alt='' src={message.message} /></div>
                                                             )
                                                                     : !editMessage && !message.message.startsWith('http') ?
-                                                                        (<Typography variant='p' className={classes.messageContent}>
-                                                                            {message.message}
-                                                                        </Typography>) : editMessage && editId === message.message_id ? (<input
+                                                                        (<Emoji className={classes.messageContent} text={message.message} />) : editMessage && editId === message.message_id ? (<input
                                                                             style={{ width: '30vw' }}
                                                                             defaultValue={message.message}
                                                                             margin="normal"
                                                                             onChange={e => changeNewMessage(e.target.value)}
                                                                             onKeyDown={enterMessageChanges} />)
-                                                                            : editMessage && message.message.startsWith('http') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : (<Typography variant='p' className={classes.messageContent}>
-                                                                                {message.message}
-                                                                            </Typography>)}
+                                                                            : editMessage && message.message.startsWith('http') ? (<div ><img className='chat-image' alt='' src={message.message} /></div>) : (<Emoji className={classes.messageContent} text={message.message} />)}
                                                         </div>
                                                         <div style={{ position: 'absolute', bottom: 0, right: 0, padding: 10 }}>
                                                             <Typography variant='p' style={{ color: '#555962', fontSize: '12.5px', display: 'flex' }}>

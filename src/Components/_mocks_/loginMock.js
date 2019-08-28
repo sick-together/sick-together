@@ -5,4 +5,3 @@ const users = {
         password: 'b'}
 }
 
-export default function 

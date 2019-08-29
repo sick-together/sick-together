@@ -120,6 +120,7 @@ function Groups(props) {
             variant="outlined"
             onChange={e => setSearch(e.target.value)}
             onKeyDown={enterSearch}
+            name='search'
           />
         </div>
         <div style={{ display: "flex", alignItems: "center", marginLeft: '10px' }}>

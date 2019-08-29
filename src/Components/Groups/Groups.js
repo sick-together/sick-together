@@ -119,6 +119,7 @@ function Groups(props) {
             className={clsx(classes.chatBox, classes.dense)}
             margin="dense"
             variant="outlined"
+            name='search'
             onChange={e => setSearch(e.target.value)}
             onKeyDown={enterSearch}
           />

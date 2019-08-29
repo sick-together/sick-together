@@ -150,6 +150,7 @@ function Header(props) {
       >
         <Toolbar>
           <IconButton
+            id='hamburger'
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
@@ -226,6 +227,7 @@ function Header(props) {
                     <ListItem button onClick={handleDrawerClose}>
                       <ListItemIcon>
                         <Fab
+                          id='add-group'
                           size="small"
                           color="primary"
                           aria-label="add"

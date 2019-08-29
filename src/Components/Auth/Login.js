@@ -105,6 +105,7 @@ function Login(props) {
             variant="contained"
             color="primary"
             fullWidth
+            id = "loginButton"
             className={classes.loginButton}
             onClick={loginUser}
             onKeyDown={handleKeyDown}
@@ -112,7 +113,7 @@ function Login(props) {
             Login
           </Button>
 
-          <Grid className={classes.registerLink}>
+          <Grid id="registerLink" className={classes.registerLink}>
             <Typography>Don't have an account? </Typography>
             <Link to="/register" className="SignUp-Link">
               Sign Up

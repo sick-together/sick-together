@@ -101,8 +101,6 @@ async searchGroups(req, res) {
     const db = req.app.get('db')
     let rooms = await db.create_room([newRoom, groupId])
     res.send(rooms)
-<<<<<<< HEAD
-=======
   },
   async editGroup(req, res) {
     let { group_id } = req.params;
@@ -123,6 +121,5 @@ async searchGroups(req, res) {
     const db = req.app.get('db')
     let rooms = await db.delete_room([room_id, group_id])
     res.send(rooms)
->>>>>>> master
   }
 };

@@ -123,18 +123,6 @@ function Login(props) {
     </div>
   );
 }
-
-          <Grid className={classes.registerLink}>
-            <Typography>Don't have an account? </Typography>
-            <Link to="/register" className="SignUp-Link">
-              Sign Up
-            </Link>
-          </Grid>
-        </Paper>
-      </Container>
-    </div>
-  );
-}
 function mapStateToProps(state) {
   return state.user;
 }

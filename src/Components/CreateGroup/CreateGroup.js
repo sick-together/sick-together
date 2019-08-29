@@ -86,7 +86,7 @@ function CreateGroup(props) {
         onChange={e => setGroupName(e.target.value)}
       />
       <div className='upload-container'>
-      <TextField
+        <TextField
           className={classes.textFields}
           name="group_picture"
           label="Group Picture"
@@ -117,11 +117,12 @@ function CreateGroup(props) {
         value={city}
         onChange={e => setCity(e.target.value)}
       />
-      <FormControl className={classes.formControl}>
+      <FormControl className={classes.formControl} id='state-selector'>
         <InputLabel htmlFor="state-select">
           State
           </InputLabel>
         <Select
+
           open={open}
           onClose={handleClose}
           onOpen={handleOpen}
@@ -163,7 +164,7 @@ function CreateGroup(props) {
           <MenuItem value={"NH"}>New Hampshire</MenuItem>
           <MenuItem value={"NJ"}>New Jersey</MenuItem>
           <MenuItem value={"NM"}>New Mexico</MenuItem>
-          <MenuItem value={"NY"}>New York</MenuItem>
+          <MenuItem id='ny' value={"NY"}>New York</MenuItem>
           <MenuItem value={"NC"}>North Carolina</MenuItem>
           <MenuItem value={"ND"}>North Dakota</MenuItem>
           <MenuItem value={"OH"}>Ohio</MenuItem>
@@ -189,7 +190,7 @@ function CreateGroup(props) {
 
       <Link to="/">
         {" "}
-        <Button className={classes.button} onClick={handleSubmit} variant="contained">
+        <Button className={classes.button} id='button' onClick={handleSubmit} variant="contained">
           Submit
         </Button>{" "}
       </Link>

@@ -81,7 +81,7 @@ function Groups(props) {
     }
     props.getJoinedGroups()
 
-  }, [groups.length])
+  }, [groups.length, joinedGroups.length])
 
 
   function setSearch(e) {
@@ -118,6 +118,7 @@ function Groups(props) {
             className={clsx(classes.chatBox, classes.dense)}
             margin="dense"
             variant="outlined"
+            name='search'
             onChange={e => setSearch(e.target.value)}
             onKeyDown={enterSearch}
             name='search'

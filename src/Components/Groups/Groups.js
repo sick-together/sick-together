@@ -81,7 +81,7 @@ function Groups(props) {
     }
     props.getJoinedGroups()
 
-  }, [groups.length])
+  }, [groups.length, joinedGroups.length])
 
 
   function setSearch(e) {

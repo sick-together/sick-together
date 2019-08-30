@@ -198,7 +198,7 @@ function Header(props) {
           </Link>
 
 
-          {["Inbox", "Logout"].map(
+          {["Logout"].map(
             (text, index) => (
               <ListItem
                 button
@@ -224,6 +224,7 @@ function Header(props) {
               <div key={index}>
                 {text === "Create New Group" ? (
                   <Link to="/creategroup">
+                    <Divider style={{width: '100%'}}/>
                     <ListItem button onClick={handleDrawerClose}>
                       <ListItemIcon>
                         <Fab
@@ -245,8 +246,9 @@ function Header(props) {
                       key={index}
                       onClick={() => getSelected(text.group_id)}
                     >
-                      <ListItem button style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ListItem button style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', textAlign: 'center' }}>
                         <Avatar alt="Group Avatar" title={text.group_name} src={text.group_picture} className={classes.bigAvatar} />
+                        <Typography>{text.group_name}</Typography>
                       </ListItem>
                     </a>
                   )}

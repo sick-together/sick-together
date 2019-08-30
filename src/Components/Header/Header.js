@@ -156,6 +156,7 @@ function Header(props) {
             onClick={handleDrawerOpen}
             edge="start"
             className={clsx(classes.menuButton, open && classes.hide)}
+            id="hamburg"
           >
             <MenuIcon />
           </IconButton>
@@ -174,7 +175,7 @@ function Header(props) {
         }}
       >
         <div className={classes.drawerHeader}>
-          <IconButton onClick={handleDrawerClose}>
+          <IconButton onClick={handleDrawerClose} id='drawer-close'>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (

@@ -150,11 +150,13 @@ function Header(props) {
       >
         <Toolbar>
           <IconButton
+            id='hamburger'
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
             className={clsx(classes.menuButton, open && classes.hide)}
+            id="hamburg"
           >
             <MenuIcon />
           </IconButton>
@@ -173,7 +175,7 @@ function Header(props) {
         }}
       >
         <div className={classes.drawerHeader}>
-          <IconButton onClick={handleDrawerClose}>
+          <IconButton onClick={handleDrawerClose} id='drawer-close'>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (
@@ -197,7 +199,7 @@ function Header(props) {
           </Link>
 
 
-          {["Inbox", "Logout"].map(
+          {["Logout"].map(
             (text, index) => (
               <ListItem
                 button
@@ -223,9 +225,11 @@ function Header(props) {
               <div key={index}>
                 {text === "Create New Group" ? (
                   <Link to="/creategroup">
+                    <Divider style={{width: '100%'}}/>
                     <ListItem button onClick={handleDrawerClose}>
                       <ListItemIcon>
                         <Fab
+                          id='add-group'
                           size="small"
                           color="primary"
                           aria-label="add"
@@ -243,8 +247,9 @@ function Header(props) {
                       key={index}
                       onClick={() => getSelected(text.group_id)}
                     >
-                      <ListItem button style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <ListItem button style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', textAlign: 'center' }}>
                         <Avatar alt="Group Avatar" title={text.group_name} src={text.group_picture} className={classes.bigAvatar} />
+                        <Typography>{text.group_name}</Typography>
                       </ListItem>
                     </a>
                   )}

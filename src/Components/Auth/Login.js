@@ -12,14 +12,13 @@ import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import autoMergeLevel1 from "redux-persist/es/stateReconciler/autoMergeLevel1";
 import "./Login.css";
 
 const useStyles = makeStyles(theme => ({
   mainContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
   },
   root: {
     display: "flex",
@@ -67,7 +66,7 @@ function Login(props) {
       <Container component="main" className={classes.mainContainer}>
         <CssBaseline />
         <Paper className={classes.root}>
-          <Typography variant='h4' className={classes.loginTitle}>
+          <Typography variant="h4" className={classes.loginTitle}>
             Sick Together
           </Typography>
           <Avatar className={classes.avatarIcon}>

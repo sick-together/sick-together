@@ -64,7 +64,6 @@ export const editUserProfilePic = (user_id, profile_pic) => {
     }
 }
 
-
 export default function (state = initialState, action) {
     let { type, payload } = action;
     switch (type) {

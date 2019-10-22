@@ -8,10 +8,14 @@
     "axios": "^0.19.0",
     "bcrypt": "^3.0.6",
     "dotenv": "^8.1.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
     "firebase": "^6.4.2",
     "firebase-file-uploader": "^0.4.2",
+    "jest": "^24.9.0",
+    "jest-enzyme": "^7.1.1",
     "massive": "^5.11.2",
     "moment": "^2.24.0",
     "react": "^16.9.0",
@@ -59,6 +63,7 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/react": "^9.3.0",
     "cypress": "^3.4.1"
   }
 }

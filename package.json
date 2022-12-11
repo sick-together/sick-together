@@ -10,7 +10,7 @@
     "dotenv": "^8.1.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-session": "^1.16.2",
     "firebase": "^6.4.2",
     "firebase-file-uploader": "^0.4.2",
